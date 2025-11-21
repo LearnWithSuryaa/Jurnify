@@ -46,10 +46,26 @@ const checkScroll = () => {
   const viewportHeight = window.innerHeight;
   const pageHeight = document.documentElement.scrollHeight;
 
-  atBottom.value = scrollTop + viewportHeight >= pageHeight - 5;
+  // Jika halaman terlalu pendek → jangan tampilkan footer
+  if (pageHeight <= viewportHeight + 50) {
+    atBottom.value = false;
+    return;
+  }
+
+  // Jika belum scroll → jangan tampilkan footer
+  if (scrollTop === 0) {
+    atBottom.value = false;
+    return;
+  }
+
+  // Footer hanya muncul saat 100% di bawah
+  atBottom.value = scrollTop + viewportHeight >= pageHeight - 2;
 };
 
 const scrollHome = () => {
+  // Penting supaya klik Home langsung sembunyikan footer
+  atBottom.value = false;
+
   window.scrollTo({
     top: 0,
     behavior: "smooth",
@@ -57,8 +73,10 @@ const scrollHome = () => {
 };
 
 onMounted(() => {
-  window.addEventListener("scroll", checkScroll);
-  checkScroll();
+  window.addEventListener("scroll", checkScroll, { passive: true });
+
+  // Menunggu layout settle agar tinggi halaman akurat
+  setTimeout(checkScroll, 50);
 });
 
 onBeforeUnmount(() => {

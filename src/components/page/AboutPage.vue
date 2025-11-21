@@ -102,8 +102,8 @@ const team = [
     image: "https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=600",
   },
   {
-    name: "Erik Anders",
-    role: "Product Advisor",
+    name: "Muhammad Surya",
+    role: "Fullstack Developer",
     image: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=600",
   },
 ];
