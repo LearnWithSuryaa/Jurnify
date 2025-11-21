@@ -1,0 +1,175 @@
+<template>
+  <section
+    id="why"
+    class="relative w-full py-32 bg-linear-to-br from-[#EDF3FA] via-[#D6E3F1] to-[#AFC9E3] overflow-hidden"
+  >
+    <!-- BACKGROUND SHAPES -->
+    <div
+      class="absolute -top-28 -left-28 w-[420px] h-[420px] bg-white/30 rounded-3xl blur-[90px] rotate-12"
+    ></div>
+
+    <div
+      class="absolute -bottom-20 -right-16 w-[340px] h-[340px] bg-[#C8D8EB]/40 rounded-full blur-[110px]"
+    ></div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-12">
+      <!-- HEADER -->
+      <div class="text-center mb-20">
+        <span
+          class="px-6 py-2 rounded-full bg-white/40 backdrop-blur-xl border border-white/50 text-[#2F3A4B] text-sm font-semibold shadow-sm"
+        >
+          💡 Mengapa Memilih Kami?
+        </span>
+
+        <h2
+          class="mt-6 text-4xl md:text-5xl font-extrabold text-[#2F3A4B] tracking-tight"
+        >
+          Semua yang Kamu Butuhkan
+          <span class="text-[#3B6A9E]">Dalam Satu Tempat</span>
+        </h2>
+
+        <p
+          class="text-[#415167]/75 max-w-2xl mx-auto mt-4 text-lg leading-relaxed"
+        >
+          Dirancang dengan kenyamanan & estetika modern. Satu platform untuk
+          seluruh kebutuhan produktivitas kamu.
+        </p>
+      </div>
+
+      <!-- DRAGGABLE BENTO GRID -->
+      <draggable
+        v-model="cards"
+        item-key="id"
+        animation="260"
+        ghost-class="opacity-40"
+        handle=".drag-handle"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-[280px]"
+      >
+        <template #item="{ element }">
+          <div
+            :class="[
+              'relative group p-8 rounded-3xl bg-white/30 backdrop-blur-2xl border border-white/40 shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.12)] hover:scale-[1.015] transition-all duration-300 overflow-hidden',
+              element.large ? 'col-span-1 lg:col-span-2' : '',
+            ]"
+          >
+            <!-- DRAG HANDLE -->
+            <div
+              class="drag-handle absolute top-4 left-4 flex flex-col gap-[3px] opacity-40 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
+            >
+              <span class="flex gap-[3px]">
+                <span class="w-1.5 h-1.5 bg-[#2F3A4B]/30 rounded-sm"></span>
+                <span class="w-1.5 h-1.5 bg-[#2F3A4B]/30 rounded-sm"></span>
+              </span>
+              <span class="flex gap-[3px]">
+                <span class="w-1.5 h-1.5 bg-[#2F3A4B]/30 rounded-sm"></span>
+                <span class="w-1.5 h-1.5 bg-[#2F3A4B]/30 rounded-sm"></span>
+              </span>
+            </div>
+
+            <!-- Accent Shape -->
+            <div
+              v-if="element.accent"
+              class="absolute"
+              :class="element.accent"
+            ></div>
+
+            <h3
+              class="text-xl md:text-2xl font-bold text-[#2F3A4B] mb-3 leading-tight"
+            >
+              {{ element.title }}
+            </h3>
+
+            <p class="text-[#415167]/80 leading-relaxed">
+              {{ element.desc }}
+            </p>
+          </div>
+        </template>
+      </draggable>
+    </div>
+  </section>
+</template>
+
+<script setup>
+import { ref } from "vue";
+import draggable from "vuedraggable";
+
+const cards = ref([
+  {
+    id: 1,
+    large: true,
+    title: "Desain Elegan & Bersih",
+    desc: "Dibangun dengan fokus pada kenyamanan mata, konsistensi warna, dan struktur visual yang rapi. Setiap elemen dirancang agar terasa harmonis dan mudah dipahami, menjadikan pengalaman penggunaan lebih nyaman dan profesional.",
+    accent:
+      "-top-6 -right-10 w-32 h-32 bg-[#AEC7DE]/40 blur-2xl rounded-full opacity-70 group-hover:opacity-90 transition-all absolute",
+  },
+  {
+    id: 2,
+    title: "Super Ringan",
+    desc: "Dikembangkan dengan optimasi yang membuat aplikasi tetap cepat dan responsif bahkan di perangkat berspesifikasi rendah.",
+    accent:
+      "top-2 right-3 w-16 h-16 bg-[#C9DAE8]/60 blur-xl rounded-full absolute",
+  },
+  {
+    id: 3,
+    title: "Terintegrasi Cerdas",
+    desc: "Seluruh fitur saling terhubung secara mulus, sehingga workflow terasa lebih natural tanpa perlu berpindah-pindah secara manual.",
+    accent:
+      "bottom-0 right-0 w-20 h-20 bg-[#AEC7DE]/50 blur-xl rounded-full absolute",
+  },
+  {
+    id: 4,
+    title: "Keamanan Prioritas",
+    desc: "Menggunakan enkripsi modern untuk menjaga kerahasiaan dan perlindungan data pengguna.",
+    accent:
+      "bottom-3 right-3 w-12 h-12 bg-[#AEC7DE]/60 blur-lg rounded-full absolute",
+  },
+  {
+    id: 5,
+    title: "Support Maksimal",
+    desc: "Tim support selalu siap membantu agar pengalaman kamu tetap stabil dan menyenangkan setiap hari.",
+    accent:
+      "bottom-3 right-3 w-12 h-12 bg-[#AEC7DE]/60 blur-lg rounded-full absolute",
+  },
+]);
+</script>
+
+<style scoped>
+@keyframes fadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+section {
+  animation: fadeUp 0.8s ease-out;
+}
+
+.opacity-40 {
+  opacity: 0.4 !important;
+}
+
+/* ✨ Drag hint animation */
+@keyframes subtleWiggle {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(2px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.drag-hint {
+  animation: subtleWiggle 1.8s ease-in-out infinite;
+}
+.drag-hint:hover {
+  animation: none;
+}
+</style>
