@@ -72,7 +72,7 @@
           class="relative backdrop-blur-2xl bg-white/15 border border-white/20 shadow-2xl rounded-3xl p-6 lg:p-10 w-full max-w-md transform hover:scale-[1.02] transition-all"
         >
           <img
-            src="/src/assets/hero.png"
+            src="/assets/hero.png"
             alt="Jurnify Illustration"
             class="w-full h-auto drop-shadow-2xl select-none floating"
           />
