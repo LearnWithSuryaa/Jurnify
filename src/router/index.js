@@ -36,7 +36,7 @@ const routes = [
   },
 
   // Dashboard Routes
-  {
+  {/*
     path: "/dashboard",
     component: DashboardLayout,
     meta: { requiresAuth: true, showNavbar: false },
@@ -59,7 +59,7 @@ const routes = [
         component: () =>
           import("../components/page/EventsPage.vue"),
       },
-    ],
+    ],*/
   },
 ];
 
