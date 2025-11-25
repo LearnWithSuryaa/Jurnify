@@ -3,10 +3,10 @@
     class="spotlight-wrap fixed top-10 left-1/2 -translate-x-1/2 z-9999 w-[min(900px,92%)]"
     role="banner"
   >
-    <nav class="relative flex items-center justify-between px-3 py-3 h-[68px]">
+    <nav class="relative flex items-center justify-start px-3 py-3 h-[68px]">
       <!-- LEFT: Spotlight-style search pill -->
       <div
-        class="left-pill flex items-center gap-3 pl-5 pr-6 h-[50px] rounded-[14px] min-w-[360px] max-w-[680px]"
+        class="left-pill flex items-center gap-3 pl-5 pr-6 h-[50px] rounded-[14px] min-w-[360px] max-w-[680px] mr-5"
         role="search"
       >
         <span class="label-text" :class="{ muted: !anyIconHover }">
@@ -42,7 +42,6 @@ import { ref } from "vue";
 import {
   HelpCircle,
   LayoutDashboard,
-  Play,
   FileQuestion,
   Workflow,
 } from "lucide-vue-next";
@@ -52,7 +51,6 @@ const links = [
   { label: "Fitur", href: "#fitur", icon: LayoutDashboard },
   { label: "Mengapa Kami?", href: "#why", icon: HelpCircle },
   { label: "Cara Kerja", href: "#work", icon: Workflow },
-  { label: "Demo", href: "#demo", icon: Play },
   { label: "FAQ", href: "#faq", icon: FileQuestion },
 ];
 
@@ -91,6 +89,7 @@ function smoothScroll(e, href) {
   border: 1px solid rgba(255, 255, 255, 0.55);
 
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05), 0 18px 38px rgba(0, 0, 0, 0.1);
+
   transition: transform 200ms ease, box-shadow 180ms ease;
 }
 
@@ -100,16 +99,28 @@ function smoothScroll(e, href) {
 }
 
 /* ===============================
-   SPOTLIGHT SEARCH PILL
+   NAV INTERNAL PADDING FIX
+================================= */
+.spotlight-wrap nav {
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ===============================
+   SPOTLIGHT SEARCH PILL (FIXED)
 ================================= */
 .left-pill {
+  flex: 1; /* ☆ pusatkan auto-flex */
   display: flex;
   justify-content: center;
-  gap: 14px;
+  align-items: center;
+  gap: 8px;
 
-  padding: 12px 22px;
-  min-width: 400px;
-  height: 56px;
+  padding: 10px 18px;
+  height: 50px;
   border-radius: 30px;
 
   background: rgba(255, 255, 255, 0.55);
@@ -120,11 +131,13 @@ function smoothScroll(e, href) {
 
   box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.7),
     0 6px 18px rgba(0, 0, 0, 0.08);
+
+  min-width: 0; /* ☆ hilangkan pemaksaan lebar */
 }
 
 /* Label mirip gaya Apple */
 .label-text {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 500;
   color: rgba(80, 80, 80, 0.38);
   transition: color 180ms ease;
@@ -139,13 +152,13 @@ function smoothScroll(e, href) {
 ================================= */
 .icons-list {
   display: flex;
-  gap: 10px;
+  gap: 6px;
   padding-right: 0px;
 }
 
 .icon-btn {
-  width: 56px;
-  height: 56px;
+  width: 46px;
+  height: 46px;
   padding: 0;
   border: none;
   border-radius: 9999px;
@@ -156,8 +169,8 @@ function smoothScroll(e, href) {
 }
 
 .icon-inner {
-  width: 56px;
-  height: 56px;
+  width: 46px;
+  height: 46px;
   border-radius: 9999px;
 
   /* Soft frosted glass */

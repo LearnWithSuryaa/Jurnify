@@ -21,19 +21,19 @@
         <FeatureCard
           title="Journey & Task"
           desc="Buat to-do list personal, catat target harian, dan progress perjalanan finansialmu."
-          image="/assets/journey.png"
+          image="/assets/journey.webp"
         />
 
         <FeatureCard
           title="Event & Pengingat"
           desc="Tambahkan event penting seperti bayar kos, tagihan kuliah, dan reminder kegiatan."
-          image="/assets/event.png"
+          image="/assets/event.webp"
         />
 
         <FeatureCard
           title="Dashboard Harian"
           desc="Pantau kondisi keuangan harian dalam satu layar dengan data real-time."
-          image="/assets/daily.png"
+          image="/assets/daily.webp"
         />
       </div>
     </div>

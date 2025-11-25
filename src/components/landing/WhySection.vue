@@ -16,9 +16,10 @@
       <!-- HEADER -->
       <div class="text-center mb-20">
         <span
-          class="px-6 py-2 rounded-full bg-white/40 backdrop-blur-xl border border-white/50 text-[#2F3A4B] text-sm font-semibold shadow-sm"
+          class="px-5 py-2 w-fit mx-auto flex items-center gap-2 rounded-full bg-white/30 backdrop-blur-xl border border-white/40 text-[#2F3A4B] text-sm font-semibold shadow-sm"
         >
-          💡 Mengapa Memilih Kami?
+          <Lightbulb class="w-4 h-4 stroke-[#2F3A4B]" />
+          Mengapa Memilih Kami?
         </span>
 
         <h2
@@ -91,6 +92,7 @@
 
 <script setup>
 import { ref } from "vue";
+import { Lightbulb } from "lucide-vue-next";
 import draggable from "vuedraggable";
 
 const cards = ref([

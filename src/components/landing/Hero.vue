@@ -24,9 +24,10 @@
       <div class="flex flex-col gap-8 translate-y-4">
         <!-- Tag -->
         <div
-          class="px-5 py-2 w-fit rounded-full bg-white/30 backdrop-blur-xl border border-white/40 text-[#2F3A4B] text-sm font-semibold shadow-sm"
+          class="px-5 py-2 w-fit flex items-center gap-2 rounded-full bg-white/30 backdrop-blur-xl border border-white/40 text-[#2F3A4B] text-sm font-semibold shadow-sm"
         >
-          ✨ Productivity Reinvented
+          <Sparkles class="w-4 h-4 stroke-[#2F3A4B]" />
+          Productivity Reinvented
         </div>
 
         <!-- Title -->
@@ -72,7 +73,7 @@
           class="relative backdrop-blur-2xl bg-white/15 border border-white/20 shadow-2xl rounded-3xl p-6 lg:p-10 w-full max-w-md transform hover:scale-[1.02] transition-all"
         >
           <img
-            src="/assets/hero.png"
+            src="/assets/hero.webp"
             alt="Jurnify Illustration"
             class="w-full h-auto drop-shadow-2xl select-none floating"
           />
@@ -90,11 +91,19 @@
   </section>
 </template>
 
+<script setup>
+import { Sparkles } from "lucide-vue-next";
+</script>
+
 <style scoped>
 @keyframes float {
   0%,
-  100% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
 }
 
 .floating {
