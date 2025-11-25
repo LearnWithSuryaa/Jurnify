@@ -18,19 +18,21 @@
       <!-- TITLE -->
       <div class="text-center flex flex-col gap-4">
         <span
-          class="px-5 py-2 w-fit mx-auto flex items-center gap-2 rounded-full bg-white/30 backdrop-blur-xl border border-white/40 text-[#2F3A4B] text-sm font-semibold shadow-sm"
+          class="section-title-item px-5 py-2 w-fit mx-auto flex items-center gap-2 rounded-full bg-white/30 backdrop-blur-xl border border-white/40 text-[#2F3A4B] text-sm font-semibold shadow-sm opacity-0 translate-y-4"
         >
           <Settings class="w-4 h-4 stroke-[#2F3A4B]" />
           Cara Kerja
         </span>
 
         <h2
-          class="text-4xl md:text-5xl font-extrabold text-[#2F3A4B] drop-shadow-sm"
+          class="section-title-item text-4xl md:text-5xl font-extrabold text-[#2F3A4B] drop-shadow-sm opacity-0 translate-y-4"
         >
           Bagaimana Sistem Ini Bekerja
         </h2>
 
-        <p class="text-[#415167]/80 max-w-2xl mx-auto text-lg">
+        <p
+          class="section-title-item text-[#415167]/80 max-w-2xl mx-auto text-lg opacity-0 translate-y-4"
+        >
           Alur kerja yang rapi, intuitif, dan didesain agar kamu memahami proses
           tanpa kebingungan.
         </p>
@@ -66,7 +68,6 @@
               {{ step.desc }}
             </p>
 
-            <!-- Soft Accent -->
             <div
               class="absolute w-10 h-10 bg-[#C9DAE8]/70 rounded-xl blur-md opacity-60"
               :class="i % 2 === 0 ? 'right-4 bottom-0' : 'left-4 bottom-0'"
@@ -79,7 +80,7 @@
 </template>
 
 <script setup>
-import { onMounted } from "vue";
+import { onMounted, onBeforeUnmount } from "vue";
 import { Settings } from "lucide-vue-next";
 import { animate, stagger } from "motion";
 
@@ -106,16 +107,73 @@ const steps = [
   },
 ];
 
+let observer = null;
+
 onMounted(() => {
-  animate(
-    ".step-item",
-    { opacity: [0, 1], transform: ["translateY(20px)", "translateY(0px)"] },
-    { delay: stagger(0.2), duration: 0.8, easing: "cubic-bezier(.25,.1,.25,1)" }
+  const section = document.getElementById("work");
+
+  observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        const steps = document.querySelectorAll(".step-item");
+        const titles = document.querySelectorAll(".section-title-item");
+
+        if (entry.isIntersecting) {
+          // TITLE IN
+          animate(
+            titles,
+            { opacity: [0, 1], y: [20, 0] },
+            { delay: stagger(0.12), duration: 0.6, easing: "ease-out" }
+          );
+
+          // STEPS IN
+          animate(
+            steps,
+            { opacity: [0, 1], y: [20, 0] },
+            { delay: stagger(0.15), duration: 0.7, easing: "ease-out" }
+          );
+        } else {
+          // TITLE OUT
+          animate(
+            titles,
+            { opacity: [1, 0], y: [0, 20] },
+            { delay: stagger(0.1), duration: 0.5, easing: "ease-in" }
+          );
+
+          // STEPS OUT
+          animate(
+            steps,
+            { opacity: [1, 0], y: [0, 20] },
+            { delay: stagger(0.1), duration: 0.5, easing: "ease-in" }
+          );
+        }
+      });
+    },
+    {
+      threshold: 0.3,
+      rootMargin: "-10% 0px -10% 0px",
+    }
   );
+
+  observer.observe(section);
+});
+
+onBeforeUnmount(() => {
+  if (observer) observer.disconnect();
 });
 </script>
 
 <style scoped>
+.step-item {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.section-title-item {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
 @keyframes float {
   0%,
   100% {

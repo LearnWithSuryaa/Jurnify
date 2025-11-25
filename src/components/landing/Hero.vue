@@ -1,5 +1,6 @@
 <template>
   <section
+    ref="heroSection"
     class="relative w-full min-h-screen flex items-center pt-28 pb-20 bg-linear-to-br from-[#E8EEF5] via-[#C8D9EA] to-[#9AB8D4] overflow-hidden"
   >
     <!-- BACKGROUND ABSTRACT SHAPES -->
@@ -18,7 +19,8 @@
 
     <!-- CONTENT -->
     <div
-      class="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12"
+      ref="heroContent"
+      class="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 animate-hidden"
     >
       <!-- TEXT SIDE -->
       <div class="flex flex-col gap-8 translate-y-4">
@@ -47,11 +49,12 @@
 
         <!-- BUTTONS -->
         <div class="flex gap-4 mt-2">
-          <button
-            class="px-8 py-3 bg-[#3B6A9E] hover:bg-[#365F90] text-white rounded-2xl font-semibold shadow-md transition-all active:scale-95"
+          <router-link
+            to="/register"
+            class="px-8 py-3 bg-[#3B6A9E] hover:bg-[#365F90] text-white rounded-2xl font-semibold shadow-md transition-all active:scale-95 inline-block text-center"
           >
             Mulai Sekarang
-          </button>
+          </router-link>
 
           <button
             class="px-8 py-3 bg-white/20 backdrop-blur-xl border border-white/30 text-[#2F3A4B] rounded-2xl font-semibold shadow-sm hover:bg-white/30 transition-all active:scale-95"
@@ -92,10 +95,48 @@
 </template>
 
 <script setup>
+import { onMounted, ref } from "vue";
 import { Sparkles } from "lucide-vue-next";
+
+const heroSection = ref(null);
+const heroContent = ref(null);
+
+onMounted(() => {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          heroContent.value.classList.add("animate-show");
+          heroContent.value.classList.remove("animate-hidden");
+        } else {
+          heroContent.value.classList.add("animate-hidden");
+          heroContent.value.classList.remove("animate-show");
+        }
+      });
+    },
+    {
+      threshold: 0.4,
+    }
+  );
+
+  observer.observe(heroSection.value);
+});
 </script>
 
 <style scoped>
+/* Fade + Soft slide */
+.animate-hidden {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.animate-show {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
 @keyframes float {
   0%,
   100% {

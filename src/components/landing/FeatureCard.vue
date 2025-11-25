@@ -60,23 +60,33 @@ onMounted(() => {
   let currentX = 0,
     currentY = 0;
 
-  const ROT_MAX = 10; // 🎯 batas aman (10 derajat)
+  const ROT_MAX = 15;
+
+  function clamp(v, min, max) {
+    return Math.max(min, Math.min(max, v));
+  }
 
   function onMove(e) {
     const rect = el.getBoundingClientRect();
     const x = e.clientX - (rect.left + rect.width / 2);
     const y = e.clientY - (rect.top + rect.height / 2);
 
-    targetX = (x / rect.width) * ROT_MAX;
-    targetY = (y / rect.height) * ROT_MAX * -1;
+    // rotateY = kiri–kanan (natural)
+    let rotX = (x / (rect.width * 0.5)) * ROT_MAX;
 
-    // Update shine
+    // rotateX = atas–bawah (HARUS minus)
+    let rotY = -(y / (rect.height * 0.5)) * ROT_MAX;
+
+    // batasi sudut supaya tidak ekstrim
+    targetX = clamp(rotX, -ROT_MAX, ROT_MAX);
+    targetY = clamp(rotY, -ROT_MAX, ROT_MAX);
+
+    // shine
     const shineX = (x / rect.width) * 100;
     const shineY = (y / rect.height) * 100;
-
     shineLayer.style.background = `
-      radial-gradient(circle at ${shineX}% ${shineY}%, rgba(255,255,255,0.25), transparent 60%)
-    `;
+    radial-gradient(circle at ${shineX}% ${shineY}%, rgba(255,255,255,0.25), transparent 60%)
+  `;
   }
 
   function animate() {

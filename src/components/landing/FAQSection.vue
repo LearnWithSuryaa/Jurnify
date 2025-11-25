@@ -12,12 +12,19 @@
     ></div>
 
     <!-- Title -->
-    <div class="relative z-10 text-center mb-20">
-      <h2 class="text-4xl font-bold text-slate-800 tracking-tight">
-        Pertanyaan Umum
+    <div
+      class="relative z-10 text-center mb-20 max-w-xl mx-auto flex flex-col gap-3"
+    >
+      <h2
+        class="section-title-item-faq text-4xl font-bold text-slate-800 tracking-tight opacity-0 translate-y-4"
+      >
+        Kenali Jurnify Lebih Dalam
       </h2>
-      <p class="text-slate-600 mt-3 text-lg">
-        Semua jawaban yang kamu butuhkan ada di sini
+
+      <p
+        class="section-title-item-faq text-slate-600 text-lg leading-relaxed opacity-0 translate-y-4"
+      >
+        Kumpulan pertanyaan yang sering ditanyakan oleh para pengguna awal.
       </p>
     </div>
 
@@ -26,7 +33,7 @@
       <div
         v-for="(item, i) in faqItems"
         :key="i"
-        class="faq-card glass-card p-6 rounded-2xl cursor-pointer transition-all duration-300"
+        class="faq-card-item faq-card glass-card p-6 rounded-2xl cursor-pointer transition-all duration-300 opacity-0 translate-y-6"
         @click="toggle(i)"
       >
         <div class="flex justify-between items-center">
@@ -71,7 +78,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from "vue";
+import { ref, onMounted, nextTick, onBeforeUnmount } from "vue";
+import { animate, stagger } from "motion";
 
 const openIndex = ref(null);
 const contentHeights = ref([]);
@@ -104,10 +112,65 @@ const faqItems = [
   },
 ];
 
+let observer = null;
+
 onMounted(() => {
+  // Hitung tinggi konten untuk animasi expand FAQ
   nextTick(() => {
     contentHeights.value = answers.value.map((el) => el.scrollHeight);
   });
+
+  // Intersection Animation
+  const section = document.getElementById("faq");
+
+  observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        const titles = document.querySelectorAll(".section-title-item-faq");
+        const faqCards = document.querySelectorAll(".faq-card-item");
+
+        if (entry.isIntersecting) {
+          // TITLE IN
+          animate(
+            titles,
+            { opacity: [0, 1], y: [20, 0] },
+            { delay: stagger(0.1), duration: 0.6, easing: "ease-out" }
+          );
+
+          // CARD IN
+          animate(
+            faqCards,
+            { opacity: [0, 1], y: [20, 0] },
+            { delay: stagger(0.12), duration: 0.7, easing: "ease-out" }
+          );
+        } else {
+          // TITLE OUT
+          animate(
+            titles,
+            { opacity: [1, 0], y: [0, 20] },
+            { delay: stagger(0.1), duration: 0.5, easing: "ease-in" }
+          );
+
+          // CARD OUT
+          animate(
+            faqCards,
+            { opacity: [1, 0], y: [0, 20] },
+            { delay: stagger(0.1), duration: 0.5, easing: "ease-in" }
+          );
+        }
+      });
+    },
+    {
+      threshold: 0.3,
+      rootMargin: "-10% 0px -10% 0px",
+    }
+  );
+
+  observer.observe(section);
+});
+
+onBeforeUnmount(() => {
+  if (observer) observer.disconnect();
 });
 
 function toggle(i) {
@@ -116,6 +179,16 @@ function toggle(i) {
 </script>
 
 <style scoped>
+.faq-card-item {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.section-title-item-faq {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
 .glass-card {
   background: rgba(255, 255, 255, 0.25);
   border: 1px solid rgba(255, 255, 255, 0.28);

@@ -1,9 +1,10 @@
 <template>
   <section
     id="why"
+    ref="whySection"
     class="relative w-full py-32 bg-linear-to-br from-[#EDF3FA] via-[#D6E3F1] to-[#AFC9E3] overflow-hidden"
   >
-    <!-- BACKGROUND SHAPES -->
+    <!-- BACKGROUND SHAPES (SELALU TAMPIL, TANPA ANIMASI) -->
     <div
       class="absolute -top-28 -left-28 w-[420px] h-[420px] bg-white/30 rounded-3xl blur-[90px] rotate-12"
     ></div>
@@ -12,7 +13,11 @@
       class="absolute -bottom-20 -right-16 w-[340px] h-[340px] bg-[#C8D8EB]/40 rounded-full blur-[110px]"
     ></div>
 
-    <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-12">
+    <!-- CONTENT YANG DI-ANIMASI -->
+    <div
+      :class="isVisible ? 'animate-show' : 'animate-hide'"
+      class="relative z-10 max-w-7xl mx-auto px-6 lg:px-12"
+    >
       <!-- HEADER -->
       <div class="text-center mb-20">
         <span
@@ -91,7 +96,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import { Lightbulb } from "lucide-vue-next";
 import draggable from "vuedraggable";
 
@@ -100,62 +105,98 @@ const cards = ref([
     id: 1,
     large: true,
     title: "Desain Elegan & Bersih",
-    desc: "Dibangun dengan fokus pada kenyamanan mata, konsistensi warna, dan struktur visual yang rapi. Setiap elemen dirancang agar terasa harmonis dan mudah dipahami, menjadikan pengalaman penggunaan lebih nyaman dan profesional.",
+    desc: "Dibangun dengan fokus pada kenyamanan mata, konsistensi warna, dan struktur visual yang rapi.",
     accent:
       "-top-6 -right-10 w-32 h-32 bg-[#AEC7DE]/40 blur-2xl rounded-full opacity-70 group-hover:opacity-90 transition-all absolute",
   },
   {
     id: 2,
     title: "Super Ringan",
-    desc: "Dikembangkan dengan optimasi yang membuat aplikasi tetap cepat dan responsif bahkan di perangkat berspesifikasi rendah.",
+    desc: "Cepat dan responsif bahkan di perangkat berspesifikasi rendah.",
     accent:
       "top-2 right-3 w-16 h-16 bg-[#C9DAE8]/60 blur-xl rounded-full absolute",
   },
   {
     id: 3,
     title: "Terintegrasi Cerdas",
-    desc: "Seluruh fitur saling terhubung secara mulus, sehingga workflow terasa lebih natural tanpa perlu berpindah-pindah secara manual.",
+    desc: "Workflow mulus dan tidak perlu berpindah manual.",
     accent:
       "bottom-0 right-0 w-20 h-20 bg-[#AEC7DE]/50 blur-xl rounded-full absolute",
   },
   {
     id: 4,
     title: "Keamanan Prioritas",
-    desc: "Menggunakan enkripsi modern untuk menjaga kerahasiaan dan perlindungan data pengguna.",
+    desc: "Menggunakan enkripsi modern untuk data pengguna.",
     accent:
       "bottom-3 right-3 w-12 h-12 bg-[#AEC7DE]/60 blur-lg rounded-full absolute",
   },
   {
     id: 5,
     title: "Support Maksimal",
-    desc: "Tim support selalu siap membantu agar pengalaman kamu tetap stabil dan menyenangkan setiap hari.",
+    desc: "Tim support selalu siap membantu.",
     accent:
       "bottom-3 right-3 w-12 h-12 bg-[#AEC7DE]/60 blur-lg rounded-full absolute",
   },
 ]);
+
+const whySection = ref(null);
+const isVisible = ref(false);
+
+let observer = null;
+
+onMounted(() => {
+  observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        isVisible.value = entry.isIntersecting;
+      });
+    },
+    { threshold: 0.25 }
+  );
+
+  if (whySection.value) observer.observe(whySection.value);
+});
+
+onBeforeUnmount(() => {
+  if (observer && whySection.value) observer.unobserve(whySection.value);
+});
 </script>
 
 <style scoped>
-@keyframes fadeUp {
+/* ANIMASI MASUK */
+@keyframes fadeUpIn {
   0% {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px) scale(0.98);
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
-section {
-  animation: fadeUp 0.8s ease-out;
+/* ANIMASI KELUAR */
+@keyframes fadeUpOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.98);
+  }
 }
 
-.opacity-40 {
-  opacity: 0.4 !important;
+/* STATE */
+.animate-show {
+  animation: fadeUpIn 0.8s ease-out forwards;
 }
 
-/* ✨ Drag hint animation */
+.animate-hide {
+  animation: fadeUpOut 0.6s ease-out forwards;
+}
+
+/* Drag hint */
 @keyframes subtleWiggle {
   0% {
     transform: translateX(0);
