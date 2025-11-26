@@ -105,35 +105,35 @@ const cards = ref([
     id: 1,
     large: true,
     title: "Desain Elegan & Bersih",
-    desc: "Dibangun dengan fokus pada kenyamanan mata, konsistensi warna, dan struktur visual yang rapi.",
+    desc: "Dirancang dengan estetika modern yang menenangkan, memadukan warna lembut, tipografi rapi, serta hierarki visual yang konsisten untuk menciptakan pengalaman antarmuka yang indah, nyaman, dan mudah dipahami sejak pertama kali digunakan.",
     accent:
       "-top-6 -right-10 w-32 h-32 bg-[#AEC7DE]/40 blur-2xl rounded-full opacity-70 group-hover:opacity-90 transition-all absolute",
   },
   {
     id: 2,
     title: "Super Ringan",
-    desc: "Cepat dan responsif bahkan di perangkat berspesifikasi rendah.",
+    desc: "Dikembangkan dengan performa sebagai prioritas utama, memastikan aplikasi tetap cepat, responsif, dan stabil bahkan pada perangkat dengan spesifikasi rendah tanpa lag, tanpa delay, hanya pengalaman yang mulus.",
     accent:
       "top-2 right-3 w-16 h-16 bg-[#C9DAE8]/60 blur-xl rounded-full absolute",
   },
   {
     id: 3,
     title: "Terintegrasi Cerdas",
-    desc: "Workflow mulus dan tidak perlu berpindah manual.",
+    desc: "Seluruh fitur saling terhubung secara otomatis sehingga alur kerja terasa natural dan efisien. Tidak perlu berpindah menu atau melakukan langkah manual yang rumit—semua terjadi secara pintar di belakang layar.",
     accent:
       "bottom-0 right-0 w-20 h-20 bg-[#AEC7DE]/50 blur-xl rounded-full absolute",
   },
   {
     id: 4,
     title: "Keamanan Prioritas",
-    desc: "Menggunakan enkripsi modern untuk data pengguna.",
+    desc: "Setiap data pengguna dilindungi menggunakan standar enkripsi modern dan praktik keamanan terkini, memastikan privasi tetap terjaga dan semua aktivitas berlangsung dengan aman tanpa kompromi.",
     accent:
       "bottom-3 right-3 w-12 h-12 bg-[#AEC7DE]/60 blur-lg rounded-full absolute",
   },
   {
     id: 5,
     title: "Support Maksimal",
-    desc: "Tim support selalu siap membantu.",
+    desc: "Tim support responsif yang selalu siap membantu kapan pun dibutuhkan baik untuk panduan penggunaan, pemecahan masalah, maupun konsultasi fitur agar pengalaman kamu selalu optimal.",
     accent:
       "bottom-3 right-3 w-12 h-12 bg-[#AEC7DE]/60 blur-lg rounded-full absolute",
   },
