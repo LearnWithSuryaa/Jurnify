@@ -1,132 +1,200 @@
 <template>
-  <div
-    class="relative w-full h-screen overflow-hidden bg-linear-to-br from-[#E8EEF5] via-[#C8D9EA] to-[#9AB8D4]"
+  <section
+    ref="dashboardSection"
+    class="relative w-full min-h-screen flex bg-linear-to-br from-[#E6ECF5] via-[#C6D5EA] to-[#9AB8D4] overflow-hidden"
   >
-    <!-- FLOATING SHAPES BACKGROUND -->
-    <div class="absolute inset-0 pointer-events-none overflow-hidden">
-      <div class="absolute top-20 left-24 w-64 h-64 bg-white/20 rounded-3xl blur-3xl animate-float-slow"></div>
-      <div class="absolute bottom-32 right-20 w-72 h-72 bg-white/10 rounded-full blur-2xl animate-float"></div>
-      <div class="absolute top-1/2 left-1/2 w-96 h-96 bg-[#ffffff30] rounded-full blur-3xl animate-pulse"></div>
-    </div>
-
-    <div class="relative flex h-full w-full">
-      <!-- SIDEBAR -->
-      <aside
-        class="z-20 w-72 h-full bg-white/20 border-r border-white/30 backdrop-blur-2xl shadow-2xl flex flex-col p-6 rounded-r-3xl animate-slide-left"
+    <!-- SIDEBAR -->
+    <aside
+      :class="[
+        'fixed top-4 left-4 h-[calc(100vh-2rem)] z-30 px-6 py-8 bg-white/25 backdrop-blur-2xl border border-white/40 shadow-2xl rounded-3xl flex flex-col transition-all duration-300',
+        isCollapsed ? 'w-[82px] items-center px-4' : 'w-[270px]',
+      ]"
+    >
+      <!-- COLLAPSE BUTTON -->
+      <button
+        @click="toggleSidebar"
+        class="absolute -right-3 top-14 w-8 h-8 rounded-full bg-white shadow-lg flex items-center justify-center hover:scale-105 transition-all"
+        :class="{ 'rotate-180': isCollapsed }"
       >
+        <ChevronLeftIcon class="w-4 h-4 text-[#2F3A4B]" />
+      </button>
+
+      <!-- LOGO -->
+      <div
+        class="mb-8 flex items-center transition-all duration-300"
+        :class="isCollapsed ? 'justify-center' : 'gap-3'"
+      >
+        <img src="/assets/logo.webp" alt="logo" class="w-10 h-10" />
         <h1
-          class="text-2xl font-bold text-[#2F3A4B] mb-10 tracking-wide drop-shadow-sm"
+          v-if="!isCollapsed"
+          class="text-[26px] font-extrabold text-[#233041] tracking-tight"
         >
           Jurnify
         </h1>
+      </div>
 
-        <!-- UPDATED MENU -->
-        <nav class="flex flex-col gap-2 text-[#2F3A4B]">
-          <RouterLink
-            v-for="item in menu"
-            :key="item.to"
-            :to="item.to"
-            class="group flex items-center gap-3 px-4 py-3 rounded-xl transition-all backdrop-blur-xl border border-white/10 bg-white/10 hover:bg-white/20 hover:border-white/30"
-            :class="{
-              'bg-white/25 border-white/40 shadow-md':
-                $route.path.startsWith(item.to),
-            }"
-          >
-            <component
-              :is="item.icon"
-              class="w-5 h-5 opacity-70 group-hover:opacity-100 transition"
-            />
-            <span class="font-medium">{{ item.label }}</span>
-          </RouterLink>
-        </nav>
-
-        <!-- LOGOUT -->
-        <div class="mt-auto">
-          <button
-            @click="logout"
-            class="w-full px-4 py-3 bg-white/20 border border-white/20 rounded-xl backdrop-blur-lg shadow hover:bg-white/30 text-[#2F3A4B] transition-all"
-          >
-            Logout
-          </button>
-        </div>
-      </aside>
-
-      <!-- MAIN CONTENT -->
-      <main
-        class="flex-1 h-full relative p-10 overflow-y-auto animate-fade-up"
+      <!-- MAIN MENU -->
+      <nav
+        :class="[
+          'flex flex-col gap-2 transition-all',
+          isCollapsed && 'items-center',
+        ]"
       >
-        <RouterView />
-      </main>
+        <button
+          v-for="item in mainMenu"
+          :key="item.id"
+          @click="goTo(item.path)"
+          class="group flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold relative border border-transparent hover:border-white/40 hover:bg-white/40 hover:shadow-xl active:scale-[0.97]"
+          :class="[
+            isActive(item.path)
+              ? 'bg-[#3B6A9E] text-white shadow-lg'
+              : 'text-[#2F3A4B]/75',
+            isCollapsed && 'justify-center',
+          ]"
+        >
+          <component :is="item.icon" class="w-6 h-6 transition-all" />
+          <span v-if="!isCollapsed">{{ item.label }}</span>
+
+          <!-- Tooltip when collapsed -->
+          <span
+            v-if="isCollapsed"
+            class="absolute left-[72px] bg-[#2F3A4B] text-white text-sm px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 whitespace-nowrap transition-all"
+          >
+            {{ item.label }}
+          </span>
+        </button>
+      </nav>
+
+      <div class="flex-1"></div>
+
+      <!-- BOTTOM MENU -->
+      <nav
+        :class="[
+          'flex flex-col gap-2 pt-4 border-t border-white/40',
+          isCollapsed && 'items-center',
+        ]"
+      >
+        <button
+          v-for="item in bottomMenu"
+          :key="item.id"
+          @click="goTo(item.path)"
+          class="group flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold relative border border-transparent hover:border-white/40 hover:bg-white/40 hover:shadow-xl active:scale-[0.97]"
+          :class="[
+            isActive(item.path)
+              ? 'bg-[#3B6A9E] text-white shadow-lg'
+              : 'text-[#2F3A4B]/75',
+            isCollapsed && 'justify-center',
+          ]"
+        >
+          <component :is="item.icon" class="w-6 h-6" />
+          <span v-if="!isCollapsed">{{ item.label }}</span>
+
+          <span
+            v-if="isCollapsed"
+            class="absolute left-[72px] bg-[#2F3A4B] text-white text-sm px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 whitespace-nowrap transition-all"
+          >
+            {{ item.label }}
+          </span>
+        </button>
+      </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div
+      :class="[
+        'relative z-10 w-full transition-all duration-300',
+        isCollapsed ? 'ml-[115px]' : 'ml-[300px]',
+      ]"
+    >
+      <div ref="contentInner" class="px-8 pt-20 pb-16 animate-hidden">
+        <router-view />
+      </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <script setup>
-import { RouterLink, RouterView } from "vue-router";
+import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { supabase } from "../../lib/supabase";
 
 import {
-  Home,
-  MapPinned,
-  CalendarClock,
-  Settings,
+  HomeIcon,
+  ClipboardListIcon,
+  CalendarIcon,
+  SettingsIcon,
+  LogOutIcon,
+  ChevronLeftIcon,
 } from "lucide-vue-next";
 
+/* STATE SIDEBAR */
+const isCollapsed = ref(false);
+const toggleSidebar = () => (isCollapsed.value = !isCollapsed.value);
+
+/* ROUTING */
 const router = useRouter();
 const route = useRoute();
 
-/* Updated Menu sesuai fitur */
-const menu = [
-  { label: "Home", to: "/dashboard", icon: Home },
+const dashboardSection = ref(null);
+const contentInner = ref(null);
+
+/* MENU DATA */
+const mainMenu = [
+  { id: 1, label: "Dashboard", icon: HomeIcon, path: "/dashboard" },
   {
-    label: "Journey & Tasks",
-    to: "/page/JourneyPage",
-    icon: MapPinned,
+    id: 2,
+    label: "Journey",
+    icon: ClipboardListIcon,
+    path: "/dashboard/journey",
   },
-  {
-    label: "Events & Pengingat",
-    to: "/dashboard/events",
-    icon: CalendarClock,
-  },
-  {
-    label: "Settings",
-    to: "/dashboard/settings",
-    icon: Settings,
-  },
+  { id: 3, label: "Events", icon: CalendarIcon, path: "/dashboard/events" },
 ];
 
-async function logout() {
-  await supabase.auth.signOut();
-  router.push("/");
-}
+const bottomMenu = [
+  {
+    id: 4,
+    label: "Pengaturan",
+    icon: SettingsIcon,
+    path: "/dashboard/settings",
+  },
+  { id: 5, label: "Logout", icon: LogOutIcon, path: "/" },
+];
+
+const goTo = (path) => router.push(path);
+const isActive = (path) => route.path === path;
+
+/* SCROLL ANIMATION */
+onMounted(() => {
+  const observer = new IntersectionObserver(
+    (entries) =>
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          contentInner.value.classList.add("animate-show");
+          contentInner.value.classList.remove("animate-hidden");
+        }
+      }),
+    { threshold: 0.2 }
+  );
+
+  observer.observe(contentInner.value);
+});
 </script>
 
 <style scoped>
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-.animate-float-slow {
-  animation: float 10s ease-in-out infinite;
-}
-.animate-slide-left {
-  animation: slide-left 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.animate-fade-up {
-  animation: fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+/* Fade and soft slide */
+.animate-hidden {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
 }
 
-@keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
-  100% { transform: translateY(0px); }
+.animate-show {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.8s ease, transform 0.8s ease;
 }
-@keyframes slide-left {
-  from { opacity: 0; transform: translateX(-40px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-@keyframes fade-up {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+
+/* Rotate transition for button */
+.rotate-180 {
+  transform: rotate(180deg);
 }
 </style>

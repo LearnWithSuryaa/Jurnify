@@ -18,20 +18,26 @@
       <!-- TITLE -->
       <div class="text-center flex flex-col gap-4">
         <span
-          class="section-title-item px-5 py-2 w-fit mx-auto flex items-center gap-2 rounded-full bg-white/30 backdrop-blur-xl border border-white/40 text-[#2F3A4B] text-sm font-semibold shadow-sm opacity-0 translate-y-4"
+          ref="badge"
+          class="section-title-item px-5 py-2 w-fit mx-auto flex items-center gap-2 rounded-full bg-white/30 backdrop-blur-xl border border-white/40 text-[#2F3A4B] text-sm font-semibold shadow-sm"
+          :style="titleStyle"
         >
           <Settings class="w-4 h-4 stroke-[#2F3A4B]" />
           Cara Kerja
         </span>
 
         <h2
-          class="section-title-item text-4xl md:text-5xl font-extrabold text-[#2F3A4B] drop-shadow-sm opacity-0 translate-y-4"
+          ref="title"
+          class="section-title-item text-4xl md:text-5xl font-extrabold text-[#2F3A4B] drop-shadow-sm"
+          :style="titleStyle"
         >
           Bagaimana Sistem Ini Bekerja
         </h2>
 
         <p
-          class="section-title-item text-[#415167]/80 max-w-2xl mx-auto text-lg opacity-0 translate-y-4"
+          ref="description"
+          class="section-title-item text-[#415167]/80 max-w-2xl mx-auto text-lg"
+          :style="titleStyle"
         >
           Alur kerja yang rapi, intuitif, dan didesain agar kamu memahami proses
           tanpa kebingungan.
@@ -49,13 +55,14 @@
         <div
           v-for="(step, i) in steps"
           :key="i"
-          class="relative w-full flex mb-24 step-item opacity-0 translate-y-6"
+          class="relative w-full flex mb-24 step-item"
           :class="
             i % 2 === 0 ? 'justify-start pr-[55%]' : 'justify-end pl-[55%]'
           "
+          :style="getStepStyle(i)"
         >
           <div
-            class="relative backdrop-blur-2xl bg-white/20 border border-white/30 shadow-xl rounded-3xl p-6 w-full max-w-md"
+            class="relative backdrop-blur-2xl bg-white/20 border border-white/30 shadow-xl rounded-3xl p-6 w-full max-w-md hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]"
           >
             <!-- Dot -->
             <div
@@ -80,9 +87,8 @@
 </template>
 
 <script setup>
-import { onMounted, onBeforeUnmount } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import { Settings } from "lucide-vue-next";
-import { animate, stagger } from "motion";
 
 const steps = [
   {
@@ -107,7 +113,26 @@ const steps = [
   },
 ];
 
+const isVisible = ref(false);
+const titleStyle = ref({
+  opacity: 0,
+  transform: "translateY(20px)",
+  transition: "opacity 0.6s ease-out, transform 0.6s ease-out",
+});
+
+const stepStyles = ref(
+  steps.map(() => ({
+    opacity: 0,
+    transform: "translateY(20px)",
+    transition: "opacity 0.7s ease-out, transform 0.7s ease-out",
+  }))
+);
+
 let observer = null;
+
+const getStepStyle = (index) => {
+  return stepStyles.value[index];
+};
 
 onMounted(() => {
   const section = document.getElementById("work");
@@ -115,37 +140,48 @@ onMounted(() => {
   observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
-        const steps = document.querySelectorAll(".step-item");
-        const titles = document.querySelectorAll(".section-title-item");
-
         if (entry.isIntersecting) {
-          // TITLE IN
-          animate(
-            titles,
-            { opacity: [0, 1], y: [20, 0] },
-            { delay: stagger(0.12), duration: 0.6, easing: "ease-out" }
-          );
+          isVisible.value = true;
 
-          // STEPS IN
-          animate(
-            steps,
-            { opacity: [0, 1], y: [20, 0] },
-            { delay: stagger(0.15), duration: 0.7, easing: "ease-out" }
-          );
+          // Animate title
+          setTimeout(() => {
+            titleStyle.value = {
+              opacity: 1,
+              transform: "translateY(0)",
+              transition: "opacity 0.6s ease-out, transform 0.6s ease-out",
+            };
+          }, 100);
+
+          // Animate steps with stagger
+          steps.forEach((_, i) => {
+            setTimeout(() => {
+              stepStyles.value[i] = {
+                opacity: 1,
+                transform: "translateY(0)",
+                transition: "opacity 0.7s ease-out, transform 0.7s ease-out",
+              };
+            }, 300 + i * 150);
+          });
         } else {
-          // TITLE OUT
-          animate(
-            titles,
-            { opacity: [1, 0], y: [0, 20] },
-            { delay: stagger(0.1), duration: 0.5, easing: "ease-in" }
-          );
+          isVisible.value = false;
 
-          // STEPS OUT
-          animate(
-            steps,
-            { opacity: [1, 0], y: [0, 20] },
-            { delay: stagger(0.1), duration: 0.5, easing: "ease-in" }
-          );
+          // Reset title
+          titleStyle.value = {
+            opacity: 0,
+            transform: "translateY(20px)",
+            transition: "opacity 0.5s ease-in, transform 0.5s ease-in",
+          };
+
+          // Reset steps
+          steps.forEach((_, i) => {
+            setTimeout(() => {
+              stepStyles.value[i] = {
+                opacity: 0,
+                transform: "translateY(20px)",
+                transition: "opacity 0.5s ease-in, transform 0.5s ease-in",
+              };
+            }, i * 100);
+          });
         }
       });
     },
@@ -164,16 +200,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.step-item {
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.section-title-item {
-  opacity: 0;
-  transform: translateY(20px);
-}
-
 @keyframes float {
   0%,
   100% {

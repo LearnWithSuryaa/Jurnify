@@ -7,7 +7,7 @@
     <router-view />
 
     <!-- Footer -->
-    <Footer />
+    <Footer v-if="$route.meta.showFooter !== false" />
   </div>
 </template>
 

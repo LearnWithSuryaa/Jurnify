@@ -36,7 +36,7 @@ const routes = [
   },
 
   // Dashboard Routes
-  {/*
+  {
     path: "/dashboard",
     component: DashboardLayout,
     meta: { requiresAuth: true, showNavbar: false },
@@ -44,22 +44,28 @@ const routes = [
       {
         path: "",
         name: "DashboardHome",
-        component: () =>
-          import("../components/page/DashboardHomePage.vue"),
+        meta: { showFooter: false },
+        component: () => import("../components/page/DashboardHomePage.vue"),
       },
       {
         path: "journey",
         name: "DashboardJourney",
-        component: () =>
-          import("../components/page/JourneyPage.vue"),
+        meta: { showFooter: false },
+        component: () => import("../components/page/JourneyPage.vue"),
       },
       {
         path: "events",
         name: "DashboardEvents",
-        component: () =>
-          import("../components/page/EventsPage.vue"),
+        meta: { showFooter: false },
+        component: () => import("../components/page/EventsPage.vue"),
       },
-    ],*/
+      {
+        path: "settings",
+        name: "DashboardSettings",
+        meta: { showFooter: false },
+        component: () => import("../components/page/SettingsPage.vue"),
+      },
+    ],
   },
 ];
 
