@@ -34,13 +34,6 @@
 
     <!-- CTA Buttons -->
     <div class="flex gap-4 mt-10 z-10">
-      <button
-        class="px-8 py-3 bg-white/20 backdrop-blur-xl border border-white/30 text-[#2F3A4B] rounded-2xl font-semibold shadow-md hover:bg-white/30 transition-all active:scale-95 flex items-center gap-2"
-      >
-        <PlayCircle class="w-4 h-4" />
-        View Demo
-      </button>
-
       <RouterLink to="/login">
         <button
           class="px-8 py-3 bg-[#3B6A9E] hover:bg-[#365F90] text-white rounded-2xl font-semibold shadow-md transition-all active:scale-95 flex items-center gap-2"
