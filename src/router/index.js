@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import LandingPage from "../components/page/LandingPage.vue";
 import AboutPage from "../components/page/AboutPage.vue";
+import ContactPage from "../components/page/ContactPage.vue";
 
 import LoginPage from "../components/page/LoginPage.vue";
 import RegisterPage from "../components/page/RegisterPage.vue";
@@ -20,6 +21,12 @@ const routes = [
     path: "/about",
     name: "About",
     component: AboutPage,
+    meta: { showNavbar: false },
+  },
+  {
+    path: "/contact",
+    name: "Contact",
+    component: ContactPage,
     meta: { showNavbar: false },
   },
   {

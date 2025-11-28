@@ -41,12 +41,14 @@
         View Demo
       </button>
 
-      <button
-        class="px-8 py-3 bg-[#3B6A9E] hover:bg-[#365F90] text-white rounded-2xl font-semibold shadow-md transition-all active:scale-95 flex items-center gap-2"
-      >
-        <ArrowRight class="w-4 h-4" />
-        Get Started
-      </button>
+      <RouterLink to="/login">
+        <button
+          class="px-8 py-3 bg-[#3B6A9E] hover:bg-[#365F90] text-white rounded-2xl font-semibold shadow-md transition-all active:scale-95 flex items-center gap-2"
+        >
+          <ArrowRight class="w-4 h-4" />
+          Get Started
+        </button>
+      </RouterLink>
     </div>
 
     <!-- TEAM GRID -->
@@ -87,24 +89,24 @@ import { ArrowRight, Rocket, PlayCircle } from "lucide-vue-next";
 
 const team = [
   {
-    name: "Richard Mills",
-    role: "Progress Specialist",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600",
+    name: "Zaskia Ramadhani",
+    role: "Copywriter",
+    image: "https://placeholder.com/600x600.png?text=Zaskia+Ramadhani",
   },
   {
-    name: "Viola Bassett",
-    role: "Customer Success Lead",
-    image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=600",
+    name: "Vanisa Putri",
+    role: "Content Creator",
+    image: "https://placeholder.com/600x600.png?text=Vanisa+Putri",
   },
   {
-    name: "Sophie Chamberlain",
-    role: "Tracking Analyst",
-    image: "https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=600",
+    name: "Apunk Febri",
+    role: "Interviewer Preparation",
+    image: "/assets/apunk.webp",
   },
   {
     name: "Muhammad Surya",
-    role: "Fullstack Developer",
-    image: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=600",
+    role: "Full-Stack Engineer | UI/UX Designer",
+    image: "https://avatars.githubusercontent.com/u/146848895?v=4",
   },
 ];
 </script>

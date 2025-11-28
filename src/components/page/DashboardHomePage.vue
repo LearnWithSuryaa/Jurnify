@@ -1,452 +1,501 @@
 <template>
   <section
-    class="relative w-full min-h-screen pt-10 pb-20 px-6 md:px-12 lg:px-16 bg-linear-to-br from-[#F6FBFF] via-[#EEF7FF] to-[#F3F8FF]"
+    class="relative w-full min-h-screen pt-10 pb-20 px-6 md:px-12 lg:px-16 bg-white/70 backdrop-blur-xl rounded-[2.5rem] shadow-xl border border-white/40"
   >
-    <!-- HEADER WITH GREETING -->
+    <!-- Header with Greeting & Time -->
     <div class="mb-8">
-      <div class="flex items-center justify-between mb-2">
+      <div class="flex items-start justify-between mb-4">
         <div>
-          <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-2">
-            {{ greeting }}, User! 👋
+          <h1
+            class="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 mb-2"
+          >
+            Selamat Datang!
           </h1>
-          <p class="text-slate-600 text-lg">{{ currentDateText }}</p>
-        </div>
-
-        <div class="hidden md:flex items-center gap-3">
-          <div class="text-right">
-            <p class="text-sm text-slate-600">Produktivitas Hari Ini</p>
-            <div class="flex items-center gap-2">
-              <div class="w-32 h-2 bg-slate-200 rounded-full overflow-hidden">
-                <div
-                  class="h-full bg-linear-to-r from-[#3B6A9E] to-[#5a8bc4] rounded-full transition-all duration-500"
-                  :style="{ width: productivityPercent + '%' }"
-                ></div>
-              </div>
-              <span class="text-sm font-bold text-slate-900">
-                {{ productivityPercent }}%
-              </span>
-            </div>
-          </div>
+          <p class="text-slate-600 text-lg">
+            {{ currentDateLong }}
+          </p>
         </div>
       </div>
     </div>
 
-    <!-- QUICK STATS -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+    <!-- Quick Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
       <!-- Total Tasks -->
       <div
-        class="bg-white/70 backdrop-blur-md rounded-2xl p-5 shadow-md border-2 border-transparent hover:border-[#3B6A9E]/30 transition-all group"
+        class="bg-white/70 backdrop-blur-md p-6 rounded-3xl shadow-lg border-2 border-[#8FABD4]/40 hover:shadow-xl hover:scale-[1.02] transition-all group"
       >
-        <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center justify-between mb-4">
           <div
-            class="w-12 h-12 bg-linear-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform"
+            class="w-14 h-14 bg-linear-to-br from-[#4A70A9] to-[#8FABD4] rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform"
           >
-            <ListTodo class="w-6 h-6 text-white" />
+            <Target class="w-7 h-7 text-white" />
           </div>
-          <span
-            class="text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full"
-            >Total</span
-          >
+          <div class="text-right">
+            <div class="text-3xl font-bold text-black">
+              {{ totalTasks }}
+            </div>
+            <div class="text-xs text-slate-700 font-medium">Total Tasks</div>
+          </div>
         </div>
-        <h3 class="text-3xl font-extrabold text-slate-900 mb-1">
-          {{ totalTasks }}
-        </h3>
-        <p class="text-sm text-slate-600">Total Tasks</p>
+        <div
+          class="flex items-center justify-between pt-4 border-t border-[#8FABD4]/30"
+        >
+          <span class="text-sm text-slate-700">Progress</span>
+          <span class="text-sm font-bold text-[#4A70A9]">
+            {{ completionRate }}%
+          </span>
+        </div>
       </div>
 
-      <!-- Pending -->
+      <!-- Active Tasks -->
       <div
-        class="bg-white/70 backdrop-blur-md rounded-2xl p-5 shadow-md border-2 border-transparent hover:border-yellow-400/50 transition-all group"
+        class="bg-white/70 backdrop-blur-md p-6 rounded-3xl shadow-lg border-2 border-[#8FABD4]/40 hover:shadow-xl hover:scale-[1.02] transition-all group"
       >
-        <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center justify-between mb-4">
           <div
-            class="w-12 h-12 bg-linear-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform"
+            class="w-14 h-14 bg-linear-to-br from-[#4A70A9]/90 to-[#4A70A9] rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform"
           >
-            <Clock class="w-6 h-6 text-white" />
+            <Activity class="w-7 h-7 text-white" />
           </div>
-          <span
-            class="text-xs font-semibold text-yellow-700 bg-yellow-50 px-3 py-1 rounded-full"
-            >Pending</span
-          >
-        </div>
-        <h3 class="text-3xl font-extrabold text-slate-900 mb-1">
-          {{ pendingTasks }}
-        </h3>
-        <p class="text-sm text-slate-600">Menunggu</p>
-      </div>
-
-      <!-- In Progress -->
-      <div
-        class="bg-white/70 backdrop-blur-md rounded-2xl p-5 shadow-md border-2 border-transparent hover:border-blue-400/50 transition-all group"
-      >
-        <div class="flex items-center justify-between mb-3">
-          <div
-            class="w-12 h-12 bg-linear-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform"
-          >
-            <Activity class="w-6 h-6 text-white" />
+          <div class="text-right">
+            <div class="text-3xl font-bold text-black">
+              {{ taskStats.in_progress }}
+            </div>
+            <div class="text-xs text-slate-700 font-medium">In Progress</div>
           </div>
-          <span
-            class="text-xs font-semibold text-blue-700 bg-blue-50 px-3 py-1 rounded-full"
-            >Progress</span
-          >
         </div>
-        <h3 class="text-3xl font-extrabold text-slate-900 mb-1">
-          {{ inProgressTasks }}
-        </h3>
-        <p class="text-sm text-slate-600">Sedang Berjalan</p>
+        <div
+          class="flex items-center justify-between pt-4 border-t border-[#8FABD4]/30"
+        >
+          <span class="text-sm text-slate-700">Status</span>
+          <span class="text-sm font-bold text-[#4A70A9]">Active</span>
+        </div>
       </div>
 
       <!-- Completed -->
       <div
-        class="bg-white/70 backdrop-blur-md rounded-2xl p-5 shadow-md border-2 border-transparent hover:border-green-400/50 transition-all group"
+        class="bg-white/70 backdrop-blur-md p-6 rounded-3xl shadow-lg border-2 border-[#8FABD4]/40 hover:shadow-xl hover:scale-[1.02] transition-all group"
       >
-        <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center justify-between mb-4">
           <div
-            class="w-12 h-12 bg-linear-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform"
+            class="w-14 h-14 bg-linear-to-br from-[#8FABD4] to-[#4A70A9] rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform"
           >
-            <CheckCircle2 class="w-6 h-6 text-white" />
+            <CheckCircle2 class="w-7 h-7 text-white" />
           </div>
-          <span
-            class="text-xs font-semibold text-green-700 bg-green-50 px-3 py-1 rounded-full"
-            >Selesai</span
-          >
+          <div class="text-right">
+            <div class="text-3xl font-bold text-black">
+              {{ taskStats.completed }}
+            </div>
+            <div class="text-xs text-slate-700 font-medium">Completed</div>
+          </div>
         </div>
-        <h3 class="text-3xl font-extrabold text-slate-900 mb-1">
-          {{ completedTasks }}
-        </h3>
-        <p class="text-sm text-slate-600">Berhasil</p>
+        <div
+          class="flex items-center justify-between pt-4 border-t border-[#8FABD4]/30"
+        >
+          <span class="text-sm text-slate-700">Success Rate</span>
+          <span class="text-sm font-bold text-[#4A70A9]">
+            {{ completionRate }}%
+          </span>
+        </div>
+      </div>
+
+      <!-- Events Today -->
+      <div
+        class="bg-white/70 backdrop-blur-md p-6 rounded-3xl shadow-lg border-2 border-[#8FABD4]/40 hover:shadow-xl hover:scale-[1.02] transition-all group"
+      >
+        <div class="flex items-center justify-between mb-4">
+          <div
+            class="w-14 h-14 bg-linear-to-br from-[#8FABD4] to-[#4A70A9] rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform"
+          >
+            <Calendar class="w-7 h-7 text-white" />
+          </div>
+          <div class="text-right">
+            <div class="text-3xl font-bold text-black">
+              {{ todayEvents.length }}
+            </div>
+            <div class="text-xs text-slate-700 font-medium">Events Today</div>
+          </div>
+        </div>
+        <div
+          class="flex items-center justify-between pt-4 border-t border-[#8FABD4]/30"
+        >
+          <span class="text-sm text-slate-700">Schedule</span>
+          <span class="text-sm font-bold text-[#4A70A9]">Today</span>
+        </div>
       </div>
     </div>
 
-    <!-- MAIN GRID -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- LEFT -->
-      <div class="lg:col-span-1 space-y-6">
-        <!-- Mini Calendar -->
-        <div
-          class="bg-white/70 backdrop-blur-md rounded-2xl shadow-md p-6 border-2 border-transparent hover:border-[#3B6A9E]/30 transition-all"
-        >
-          <div class="flex items-center justify-between mb-4">
-            <h2
-              class="text-lg font-bold text-slate-900 flex items-center gap-2"
-            >
-              <CalendarIcon class="w-5 h-5 text-[#3B6A9E]" />
-              {{ monthName }} {{ currentYear }}
-            </h2>
-            <div class="flex gap-1">
-              <button
-                @click="prevMonth"
-                class="p-1.5 hover:bg-slate-100 rounded-lg transition"
-              >
-                <ChevronLeft class="w-4 h-4" />
-              </button>
-              <button
-                @click="nextMonth"
-                class="p-1.5 hover:bg-slate-100 rounded-lg transition"
-              >
-                <ChevronRight class="w-4 h-4" />
-              </button>
-            </div>
-          </div>
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+      <!-- Calendar Widget -->
+      <div
+        class="lg:col-span-1 bg-white/80 backdrop-blur-md p-6 rounded-3xl shadow-lg border-2 border-slate-200"
+      >
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-3">
+            <Calendar class="w-6 h-6 text-[#3B6A9E]" />
+            Kalender
+          </h2>
+          <RouterLink
+            to="/dashboard/events"
+            class="text-sm text-[#3B6A9E] hover:text-[#2f5680] font-semibold flex items-center gap-1"
+          >
+            Lihat Semua
+            <ChevronRight class="w-4 h-4" />
+          </RouterLink>
+        </div>
 
-          <div class="grid grid-cols-7 gap-1 text-center text-xs mb-2">
-            <div
-              v-for="day in ['S', 'M', 'T', 'W', 'T', 'F', 'S']"
-              :key="day"
-              class="text-slate-600 font-semibold py-1"
-            >
-              {{ day }}
-            </div>
-          </div>
+        <div class="mb-4 text-center">
+          <div class="text-lg font-bold text-slate-900">{{ monthName }}</div>
+        </div>
 
-          <div class="grid grid-cols-7 gap-1">
-            <div
-              v-for="(day, index) in miniCalendarDays"
-              :key="index"
-              :class="[
-                'aspect-square flex items-center justify-center text-xs rounded-lg transition-all cursor-pointer',
-                day.isCurrentMonth
-                  ? 'text-slate-900 hover:bg-slate-100'
-                  : 'text-slate-400',
-                day.isToday
-                  ? 'bg-linear-to-br from-[#3B6A9E] to-[#5a8bc4] text-white font-bold shadow-md'
-                  : '',
-                day.hasEvents ? 'font-bold' : '',
-              ]"
-            >
-              <div class="relative">
-                {{ day.date }}
-                <div
-                  v-if="day.hasEvents && !day.isToday"
-                  class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-[#3B6A9E] rounded-full"
-                ></div>
-              </div>
-            </div>
+        <!-- Week days -->
+        <div class="grid grid-cols-7 gap-1 mb-2">
+          <div
+            v-for="(d, i) in weekDays"
+            :key="i"
+            class="text-center text-xs font-semibold text-slate-600 py-2"
+          >
+            {{ d }}
           </div>
         </div>
 
+        <!-- Calendar grid -->
+        <div class="grid grid-cols-7 gap-1">
+          <button
+            v-for="(day, idx) in calendarDays"
+            :key="idx"
+            :class="[
+              'relative aspect-square rounded-xl text-sm font-medium transition-all',
+              !day.isCurrentMonth ? 'text-slate-300' : 'text-slate-700',
+              isToday(day.date)
+                ? 'bg-linear-to-br from-[#3B6A9E] to-[#5a8bc4] text-white shadow-md'
+                : 'hover:bg-slate-50',
+              hasEvents(day.date) && !isToday(day.date)
+                ? 'bg-blue-50 border-2 border-blue-200'
+                : '',
+            ]"
+          >
+            {{ day.date.getDate() }}
+            <div
+              v-if="hasEvents(day.date)"
+              class="absolute bottom-1 left-1/2 transform -translate-x-1/2"
+            >
+              <div
+                :class="[
+                  'w-1.5 h-1.5 rounded-full',
+                  isToday(day.date) ? 'bg-white' : 'bg-blue-500',
+                ]"
+              />
+            </div>
+          </button>
+        </div>
+
         <!-- Today's Events -->
-        <div
-          class="bg-white/70 backdrop-blur-md rounded-2xl shadow-md p-6 border-2 border-transparent hover:border-[#3B6A9E]/30 transition-all"
-        >
-          <div class="flex items-center gap-2 mb-4">
+        <div class="mt-6 pt-6 border-t border-slate-200">
+          <h3
+            class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2"
+          >
+            <Zap class="w-4 h-4 text-orange-500" />
+            Event Hari Ini
+          </h3>
+          <div v-if="todayEvents.length > 0" class="space-y-2">
             <div
-              class="w-10 h-10 bg-linear-to-br from-[#3B6A9E] to-[#5a8bc4] rounded-xl flex items-center justify-center"
+              v-for="ev in todayEvents"
+              :key="ev.id"
+              class="flex items-center gap-3 p-3 bg-linear-to-r from-blue-50 to-transparent rounded-xl"
             >
-              <CalendarCheck class="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h2 class="text-lg font-bold text-slate-900">Event Hari Ini</h2>
-              <p class="text-xs text-slate-600">
-                {{ todayEvents.length }} event
-              </p>
-            </div>
-          </div>
-
-          <div v-if="todayEvents.length === 0" class="text-center py-8">
-            <div
-              class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3"
-            >
-              <CalendarX class="w-8 h-8 text-slate-400" />
-            </div>
-            <p class="text-sm text-slate-600">Tidak ada event hari ini</p>
-          </div>
-
-          <div v-else class="space-y-3 max-h-[300px] overflow-y-auto">
-            <div
-              v-for="event in todayEvents"
-              :key="event.id"
-              class="p-4 rounded-xl border-2 border-slate-100 hover:border-[#3B6A9E]/30 transition-all group"
-            >
-              <div class="flex items-start gap-3">
+              <div
+                class="w-8 h-8 bg-linear-to-br from-[#3B6A9E] to-[#5a8bc4] rounded-lg flex items-center justify-center shrink-0"
+              >
                 <component
-                  :is="categoryIcon(event.metadata?.category)"
-                  class="w-5 h-5 text-[#3B6A9E] mt-0.5"
+                  :is="categoryIcon(ev.metadata?.category)"
+                  class="w-4 h-4 text-white"
                 />
-                <div class="flex-1">
-                  <h4 class="font-bold text-slate-900 mb-1">
-                    {{ event.title }}
-                  </h4>
-                  <p class="text-xs text-slate-600 mb-2">
-                    {{ event.description || "Tidak ada deskripsi" }}
-                  </p>
-                  <span
-                    class="inline-block text-[10px] px-2 py-1 rounded-full font-semibold"
-                    :class="tagColor(event.metadata?.category)"
-                  >
-                    {{ event.metadata?.category }}
-                  </span>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="text-sm font-semibold text-slate-900 truncate">
+                  {{ ev.title }}
                 </div>
+                <div class="text-xs text-slate-600 capitalize">
+                  {{ ev.metadata?.category }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div v-else class="text-center py-6 text-slate-400 text-sm">
+            Tidak ada event hari ini
+          </div>
+        </div>
+      </div>
+
+      <!-- Tasks Overview -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Urgent Tasks -->
+        <div
+          class="bg-white/80 backdrop-blur-md p-6 rounded-3xl shadow-lg border-2 border-red-200"
+        >
+          <div class="flex items-center justify-between mb-6">
+            <h2
+              class="text-2xl font-bold text-slate-900 flex items-center gap-3"
+            >
+              <AlertCircle class="w-6 h-6 text-red-500" />
+              Tugas Mendesak
+            </h2>
+            <span
+              class="px-4 py-1.5 bg-red-100 text-red-700 rounded-full text-sm font-bold"
+            >
+              {{ urgentTasks.length }} Tugas
+            </span>
+          </div>
+
+          <div
+            v-if="urgentTasks.length > 0"
+            class="space-y-3 max-h-[400px] overflow-y-auto pr-2"
+          >
+            <div
+              v-for="task in urgentTasks"
+              :key="task.id"
+              class="group p-4 bg-linear-to-r from-red-50 to-transparent rounded-2xl border-2 border-red-100 hover:border-red-300 hover:shadow-md transition-all"
+            >
+              <div class="flex items-start justify-between gap-4">
+                <div class="flex-1 min-w-0">
+                  <h3
+                    class="text-base font-bold text-slate-900 mb-2 line-clamp-2"
+                  >
+                    {{ task.title }}
+                  </h3>
+                  <div class="flex items-center gap-3 text-sm flex-wrap">
+                    <div class="flex items-center gap-2">
+                      <Clock :class="getDaysUntilClass(task.due_date)" />
+                      <span
+                        :class="[
+                          'font-semibold text-xs',
+                          getDaysUntilTextClass(task.due_date),
+                        ]"
+                      >
+                        {{ getDaysUntil(task.due_date) }}
+                      </span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span
+                        :class="[
+                          'px-2.5 py-1 rounded-full text-xs font-bold',
+                          task.status === 'pending'
+                            ? 'bg-yellow-100 text-yellow-700'
+                            : 'bg-blue-100 text-blue-700',
+                        ]"
+                      >
+                        {{
+                          task.status === "pending" ? "Pending" : "In Progress"
+                        }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <RouterLink to="/dashboard/journey">
+                  <button
+                    class="cursor-pointer opacity-0 group-hover:opacity-100 transition p-2 hover:bg-white rounded-lg shrink-0"
+                  >
+                    <ChevronRight class="w-4 h-4 text-slate-600" />
+                  </button>
+                </RouterLink>
+              </div>
+            </div>
+          </div>
+          <div v-else class="text-center py-12 text-slate-400">
+            <Award class="w-12 h-12 mx-auto mb-3 text-green-400" />
+            <div class="text-sm font-medium">Tidak ada tugas mendesak!</div>
+            <div class="text-xs">Semua tugas dalam kendali</div>
+          </div>
+        </div>
+
+        <!-- Task Status Overview -->
+        <div
+          class="bg-white/80 backdrop-blur-md p-6 rounded-3xl shadow-lg border-2 border-slate-200"
+        >
+          <div class="flex items-center justify-between mb-6">
+            <h2
+              class="text-2xl font-bold text-slate-900 flex items-center gap-3"
+            >
+              <BarChart3 class="w-6 h-6 text-[#3B6A9E]" />
+              Status Tugas
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div
+              class="p-4 bg-linear-to-br from-yellow-50 to-yellow-100 rounded-2xl border-2 border-yellow-200"
+            >
+              <div class="flex items-center gap-3 mb-2">
+                <Clock class="w-5 h-5 text-yellow-600" />
+                <span class="text-xs font-semibold text-yellow-700"
+                  >Pending</span
+                >
+              </div>
+              <div class="text-3xl font-bold text-yellow-700">
+                {{ taskStats.pending }}
+              </div>
+            </div>
+
+            <div
+              class="p-4 bg-linear-to-br from-blue-50 to-blue-100 rounded-2xl border-2 border-blue-200"
+            >
+              <div class="flex items-center gap-3 mb-2">
+                <Activity class="w-5 h-5 text-blue-600" />
+                <span class="text-xs font-semibold text-blue-700"
+                  >Progress</span
+                >
+              </div>
+              <div class="text-3xl font-bold text-blue-700">
+                {{ taskStats.in_progress }}
+              </div>
+            </div>
+
+            <div
+              class="p-4 bg-linear-to-br from-green-50 to-green-100 rounded-2xl border-2 border-green-200"
+            >
+              <div class="flex items-center gap-3 mb-2">
+                <CheckCircle2 class="w-5 h-5 text-green-600" />
+                <span class="text-xs font-semibold text-green-700"
+                  >Success</span
+                >
+              </div>
+              <div class="text-3xl font-bold text-green-700">
+                {{ taskStats.completed }}
+              </div>
+            </div>
+
+            <div
+              class="p-4 bg-linear-to-br from-red-50 to-red-100 rounded-2xl border-2 border-red-200"
+            >
+              <div class="flex items-center gap-3 mb-2">
+                <XCircle class="w-5 h-5 text-red-600" />
+                <span class="text-xs font-semibold text-red-700"
+                  >Cancelled</span
+                >
+              </div>
+              <div class="text-3xl font-bold text-red-700">
+                {{ taskStats.cancelled }}
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- RIGHT -->
-      <div class="lg:col-span-2 space-y-6">
-        <!-- Upcoming Deadlines -->
-        <div
-          class="bg-white/70 backdrop-blur-md rounded-2xl shadow-md p-6 border-2 border-transparent hover:border-red-400/30 transition-all"
-        >
-          <div class="flex items-center justify-between mb-5">
-            <div class="flex items-center gap-2">
-              <div
-                class="w-10 h-10 bg-linear-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center"
-              >
-                <AlertCircle class="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h2 class="text-lg font-bold text-slate-900">
-                  Deadline Mendekat
-                </h2>
-                <p class="text-xs text-slate-600">7 hari ke depan</p>
-              </div>
-            </div>
-            <span
-              class="px-3 py-1 bg-red-50 text-red-600 rounded-full text-xs font-bold"
-              >{{ upcomingDeadlines.length }} tasks</span
-            >
-          </div>
-
-          <div v-if="upcomingDeadlines.length === 0" class="text-center py-8">
-            <div
-              class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3"
-            >
-              <CheckCircle2 class="w-8 h-8 text-slate-400" />
-            </div>
-            <p class="text-sm text-slate-600">Tidak ada deadline mendekat</p>
-          </div>
-
-          <div v-else class="space-y-3">
-            <div
-              v-for="task in upcomingDeadlines"
-              :key="task.id"
-              class="p-4 rounded-xl bg-linear-to-br from-white to-red-50 border-2 border-red-100 hover:border-red-300 transition-all group"
-            >
-              <div class="flex items-start justify-between gap-4">
-                <div class="flex-1">
-                  <div class="flex items-center gap-2 mb-2">
-                    <span
-                      class="px-2 py-1 rounded-full text-xs font-bold"
-                      :class="statusBadgeColor(task.status)"
-                    >
-                      {{ statusLabel(task.status) }}
-                    </span>
-                    <span class="text-xs text-red-600 font-semibold">
-                      {{ daysUntilDeadline(task.due_date) }}
-                    </span>
-                  </div>
-                  <h4 class="font-bold text-slate-900 mb-1">
-                    {{ task.title }}
-                  </h4>
-                  <p class="text-xs text-slate-600 line-clamp-2 mb-2">
-                    {{ task.description || "Tidak ada deskripsi" }}
-                  </p>
-                  <div class="flex items-center gap-2 text-xs text-slate-500">
-                    <Clock class="w-3.5 h-3.5" />
-                    <span>Deadline: {{ formatDate(task.due_date) }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+    <!-- Bottom Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Recent Activity -->
+      <div
+        class="bg-white/80 backdrop-blur-md p-6 rounded-3xl shadow-lg border-2 border-slate-200"
+      >
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-3">
+            <TrendingUp class="w-6 h-6 text-[#3B6A9E]" />
+            Aktivitas Terbaru
+          </h2>
         </div>
 
-        <!-- Recent Tasks -->
-        <div
-          class="bg-white/70 backdrop-blur-md rounded-2xl shadow-md p-6 border-2 border-transparent hover:border-[#3B6A9E]/30 transition-all"
-        >
-          <div class="flex items-center justify-between mb-5">
-            <div class="flex items-center gap-2">
-              <div
-                class="w-10 h-10 bg-linear-to-br from-[#3B6A9E] to-[#5a8bc4] rounded-xl flex items-center justify-center"
+        <div class="space-y-3">
+          <div
+            v-for="task in recentTasks"
+            :key="task.id"
+            class="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl hover:bg-slate-100 transition-colors group"
+          >
+            <div
+              :class="[
+                'w-10 h-10 rounded-xl flex items-center justify-center shrink-0',
+                task.status === 'pending'
+                  ? 'bg-yellow-100'
+                  : task.status === 'in_progress'
+                  ? 'bg-blue-100'
+                  : task.status === 'completed'
+                  ? 'bg-green-100'
+                  : 'bg-red-100',
+              ]"
+            >
+              <Clock
+                v-if="task.status === 'pending'"
+                class="w-5 h-5 text-yellow-600"
+              />
+              <Activity
+                v-else-if="task.status === 'in_progress'"
+                class="w-5 h-5 text-blue-600"
+              />
+              <CheckCircle2
+                v-else-if="task.status === 'completed'"
+                class="w-5 h-5 text-green-600"
+              />
+              <XCircle v-else class="w-5 h-5 text-red-600" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-semibold text-slate-900 truncate">
+                {{ task.title }}
+              </div>
+              <div class="text-xs text-slate-600">
+                Dibuat {{ formatDate(task.created_at) }}
+              </div>
+            </div>
+            <RouterLink to="/dashboard/journey">
+              <button
+                class="opacity-0 cursor-pointer group-hover:opacity-100 transition p-2 hover:bg-white rounded-lg shrink-0"
               >
-                <ListTodo class="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h2 class="text-lg font-bold text-slate-900">Task Terbaru</h2>
-                <p class="text-xs text-slate-600">5 task terakhir</p>
-              </div>
-            </div>
-            <router-link
-              to="/dashboard/journey"
-              class="text-sm text-[#3B6A9E] hover:text-[#2f5680] font-semibold flex items-center gap-1 transition-all hover:gap-2"
-            >
-              Lihat Semua
-              <ChevronRight class="w-4 h-4" />
-            </router-link>
-          </div>
-
-          <div v-if="recentTasks.length === 0" class="text-center py-8">
-            <div
-              class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3"
-            >
-              <ListTodo class="w-8 h-8 text-slate-400" />
-            </div>
-            <p class="text-sm text-slate-600">Belum ada task</p>
-          </div>
-
-          <div v-else class="space-y-3">
-            <div
-              v-for="task in recentTasks"
-              :key="task.id"
-              class="p-4 rounded-xl border-2 border-slate-100 hover:border-[#3B6A9E]/30 transition-all group"
-            >
-              <div class="flex items-start justify-between gap-4">
-                <div class="flex-1">
-                  <div class="flex items-center gap-2 mb-2">
-                    <component
-                      :is="statusIcon(task.status)"
-                      class="w-4 h-4"
-                      :class="statusIconColor(task.status)"
-                    />
-                    <span
-                      class="px-2 py-1 rounded-full text-xs font-bold"
-                      :class="statusBadgeColor(task.status)"
-                    >
-                      {{ statusLabel(task.status) }}
-                    </span>
-                  </div>
-                  <h4 class="font-bold text-slate-900 mb-1">
-                    {{ task.title }}
-                  </h4>
-                  <p class="text-xs text-slate-600 line-clamp-2 mb-2">
-                    {{ task.description || "Tidak ada deskripsi" }}
-                  </p>
-                  <div class="flex items-center gap-3 text-xs text-slate-500">
-                    <div class="flex items-center gap-1">
-                      <CalendarIcon class="w-3.5 h-3.5" />
-                      <span>{{ formatDate(task.created_at) }}</span>
-                    </div>
-                    <div class="flex items-center gap-1">
-                      <Clock class="w-3.5 h-3.5" />
-                      <span>{{ formatDate(task.due_date) }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+                <ChevronRight class="w-4 h-4 text-slate-600" />
+              </button>
+            </RouterLink>
           </div>
         </div>
+      </div>
 
-        <!-- QUICK ACTIONS -->
-        <div
-          class="bg-linear-to-br from-[#3B6A9E] to-[#5a8bc4] rounded-2xl shadow-lg p-6 text-white"
-        >
-          <div class="flex items-center gap-3 mb-4">
+      <!-- Upcoming Events -->
+      <div
+        class="bg-white/80 backdrop-blur-md p-6 rounded-3xl shadow-lg border-2 border-slate-200"
+      >
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-3">
+            <Calendar class="w-6 h-6 text-[#3B6A9E]" />
+            Event Mendatang
+          </h2>
+        </div>
+
+        <div v-if="upcomingEvents.length > 0" class="space-y-3">
+          <div
+            v-for="ev in upcomingEvents"
+            :key="ev.id"
+            class="flex items-center gap-4 p-4 bg-linear-to-r from-blue-50 to-transparent rounded-2xl hover:shadow-md transition-shadow group cursor-pointer"
+          >
             <div
-              class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center"
+              class="w-10 h-10 bg-linear-to-br from-[#3B6A9E] to-[#5a8bc4] rounded-xl flex items-center justify-center shrink-0"
             >
-              <Zap class="w-5 h-5 text-white" />
+              <component
+                :is="categoryIcon(ev.metadata?.category)"
+                class="w-5 h-5 text-white"
+              />
             </div>
-            <div>
-              <h2 class="text-lg font-bold">Quick Actions</h2>
-              <p class="text-xs text-white/80">Akses cepat ke fitur utama</p>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-semibold text-slate-900 truncate">
+                {{ ev.title }}
+              </div>
+              <div class="flex items-center gap-2 text-xs text-slate-600">
+                <span class="capitalize">{{
+                  ev.metadata?.category || "event"
+                }}</span>
+                <span>•</span>
+                <span>{{ formatDate(ev.event_date) }}</span>
+                <span v-if="ev.start_time"
+                  >• {{ formatTime(ev.start_time) }}</span
+                >
+              </div>
             </div>
+            <ArrowRight
+              class="w-5 h-5 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity"
+            />
           </div>
-
-          <div class="grid grid-cols-2 gap-3">
-            <button
-              class="bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-xl p-4 transition-all group text-left"
-            >
-              <Plus
-                class="w-6 h-6 mb-2 group-hover:scale-110 transition-transform"
-              />
-              <p class="text-sm font-bold">Tambah Task</p>
-              <p class="text-xs text-white/80">Buat task baru</p>
-            </button>
-
-            <button
-              class="bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-xl p-4 transition-all group text-left"
-            >
-              <CalendarPlus
-                class="w-6 h-6 mb-2 group-hover:scale-110 transition-transform"
-              />
-              <p class="text-sm font-bold">Tambah Event</p>
-              <p class="text-xs text-white/80">Buat event baru</p>
-            </button>
-
-            <button
-              class="bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-xl p-4 transition-all group text-left"
-            >
-              <TrendingUp
-                class="w-6 h-6 mb-2 group-hover:scale-110 transition-transform"
-              />
-              <p class="text-sm font-bold">Lihat Progress</p>
-              <p class="text-xs text-white/80">Analisis task</p>
-            </button>
-
-            <button
-              class="bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-xl p-4 transition-all group text-left"
-            >
-              <CalendarIcon
-                class="w-6 h-6 mb-2 group-hover:scale-110 transition-transform"
-              />
-              <p class="text-sm font-bold">Kalender</p>
-              <p class="text-xs text-white/80">Lihat semua event</p>
-            </button>
-          </div>
+        </div>
+        <div v-else class="text-center py-12 text-slate-400">
+          <Calendar class="w-12 h-12 mx-auto mb-3" />
+          <div class="text-sm font-medium">Tidak ada event mendatang</div>
         </div>
       </div>
     </div>
@@ -454,284 +503,244 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import {
-  Calendar as CalendarIcon,
+  Calendar,
+  CheckCircle2,
   Clock,
   Activity,
-  CheckCircle2,
-  ListTodo,
-  Plus,
-  ChevronLeft,
-  ChevronRight,
-  AlertCircle,
-  CalendarCheck,
-  CalendarX,
-  Zap,
-  CalendarPlus,
+  XCircle,
   TrendingUp,
+  AlertCircle,
+  Target,
+  Zap,
   Timer,
+  ChevronRight,
   UserRound,
   Pin,
+  Plus,
+  ArrowRight,
+  Award,
+  BarChart3,
 } from "lucide-vue-next";
-
 import { supabase } from "../../lib/supabase.js";
 
-// STATE
+/* ================= STATE ================= */
 const tasks = ref([]);
 const events = ref([]);
-const currentMonth = ref(new Date().getMonth());
-const currentYear = ref(new Date().getFullYear());
+const currentTime = ref(new Date());
+const selectedDate = ref(new Date());
+const weekDays = ["S", "M", "T", "W", "T", "F", "S"];
+let timeInterval = null;
 
-const monthNames = [
-  "Januari",
-  "Februari",
-  "Maret",
-  "April",
-  "Mei",
-  "Juni",
-  "Juli",
-  "Agustus",
-  "September",
-  "Oktober",
-  "November",
-  "Desember",
-];
+/* ================= TIMEZONE SAFE HELPERS ================= */
+const sameLocalDay = (a, b) => {
+  const da = new Date(a);
+  const db = new Date(b);
+  return (
+    da.getFullYear() === db.getFullYear() &&
+    da.getMonth() === db.getMonth() &&
+    da.getDate() === db.getDate()
+  );
+};
 
-// FETCH DATA
-const fetchTasks = async () => {
+const startOfToday = () => {
+  const d = new Date();
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+};
+
+/* ================= FETCH DATA ================= */
+const fetchData = async () => {
   const user = (await supabase.auth.getUser()).data.user;
   if (!user) return;
-  const { data } = await supabase
+
+  const { data: tasksData } = await supabase
     .from("tasks")
     .select("*")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
-  tasks.value = data || [];
-};
 
-const fetchEvents = async () => {
-  const user = (await supabase.auth.getUser()).data.user;
-  if (!user) return;
-  const { data } = await supabase
+  tasks.value = tasksData || [];
+
+  const { data: eventsData } = await supabase
     .from("events")
     .select("*")
     .eq("user_id", user.id)
     .order("event_date", { ascending: true });
-  events.value = data || [];
+
+  events.value = eventsData || [];
 };
 
+/* ================= LIFECYCLE ================= */
 onMounted(() => {
-  fetchTasks();
-  fetchEvents();
+  fetchData();
+  timeInterval = setInterval(() => {
+    currentTime.value = new Date();
+  }, 1000);
 });
 
-// COMPUTED
-const greeting = computed(() => {
-  const hour = new Date().getHours();
-  if (hour < 12) return "Selamat Pagi";
-  if (hour < 18) return "Selamat Siang";
-  return "Selamat Malam";
+onBeforeUnmount(() => {
+  if (timeInterval) clearInterval(timeInterval);
 });
 
-const currentDateText = computed(() => {
-  const options = {
+/* ================= COMPUTED ================= */
+const currentTimeFormatted = computed(() =>
+  currentTime.value.toLocaleTimeString("id-ID", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  })
+);
+
+const currentDateLong = computed(() =>
+  currentTime.value.toLocaleDateString("id-ID", {
     weekday: "long",
-    year: "numeric",
-    month: "long",
     day: "numeric",
-  };
-  return new Date().toLocaleDateString("id-ID", options);
-});
-
-const monthName = computed(() => monthNames[currentMonth.value]);
-
-const totalTasks = computed(() => tasks.value.length);
-const pendingTasks = computed(
-  () => tasks.value.filter((t) => t.status === "pending").length
-);
-const inProgressTasks = computed(
-  () => tasks.value.filter((t) => t.status === "in_progress").length
-);
-const completedTasks = computed(
-  () => tasks.value.filter((t) => t.status === "completed").length
+    month: "long",
+    year: "numeric",
+  })
 );
 
-const productivityPercent = computed(() => {
-  if (totalTasks.value === 0) return 0;
-  return Math.round((completedTasks.value / totalTasks.value) * 100);
-});
+const monthName = computed(() =>
+  selectedDate.value.toLocaleString("id-ID", {
+    month: "long",
+    year: "numeric",
+  })
+);
 
-const todayEvents = computed(() => {
-  const today = new Date().toISOString().split("T")[0];
-  return events.value.filter((e) => e.event_date === today);
-});
-
-const upcomingDeadlines = computed(() => {
-  const today = new Date();
-  const sevenDaysLater = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
-
-  return tasks.value
-    .filter((t) => {
-      if (t.status === "completed") return false;
-      const dueDate = new Date(t.due_date);
-      return dueDate >= today && dueDate <= sevenDaysLater;
-    })
-    .sort((a, b) => new Date(a.due_date) - new Date(b.due_date))
-    .slice(0, 3);
-});
-
-const recentTasks = computed(() => {
-  return tasks.value.slice(0, 5);
-});
-
-const miniCalendarDays = computed(() => {
-  const firstDay = new Date(currentYear.value, currentMonth.value, 1);
-  const lastDate = new Date(
-    currentYear.value,
-    currentMonth.value + 1,
-    0
-  ).getDate();
+const calendarDays = computed(() => {
+  const year = selectedDate.value.getFullYear();
+  const month = selectedDate.value.getMonth();
+  const firstDay = new Date(year, month, 1);
+  const lastDate = new Date(year, month + 1, 0).getDate();
   const startDay = firstDay.getDay();
 
   const days = [];
-  const today = new Date();
-  const todayStr = today.toISOString().split("T")[0];
-
-  // Previous month days
   for (let i = 0; i < startDay; i++) {
-    const date = new Date(
-      currentYear.value,
-      currentMonth.value,
-      i - startDay + 1
-    );
     days.push({
-      date: date.getDate(),
+      date: new Date(year, month, i - startDay + 1),
       isCurrentMonth: false,
-      isToday: false,
-      hasEvents: false,
     });
   }
-
-  // Current month days
   for (let d = 1; d <= lastDate; d++) {
-    const date = new Date(currentYear.value, currentMonth.value, d);
-    const dateStr = date.toISOString().split("T")[0];
     days.push({
-      date: d,
+      date: new Date(year, month, d),
       isCurrentMonth: true,
-      isToday: dateStr === todayStr,
-      hasEvents: events.value.some((e) => e.event_date === dateStr),
     });
   }
-
-  // Next month days
-  const remaining = 42 - days.length;
-  for (let i = 1; i <= remaining; i++) {
-    days.push({
-      date: i,
-      isCurrentMonth: false,
-      isToday: false,
-      hasEvents: false,
-    });
-  }
-
   return days;
 });
 
-// HELPERS
-const formatDate = (dateStr) => {
-  if (!dateStr) return "";
-  return new Date(dateStr).toLocaleDateString("id-ID", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-};
+/* ================= EVENTS (FINAL & SESUAI SPESIFIKASI) ================= */
 
-const daysUntilDeadline = (dueDate) => {
+// ✅ EVENT HARI INI (HANYA HARI INI)
+const todayEvents = computed(() => {
   const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const due = new Date(dueDate);
-  due.setHours(0, 0, 0, 0);
-  const diff = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
+  return events.value.filter((ev) => sameLocalDay(ev.event_date, today));
+});
 
-  if (diff === 0) return "Hari ini!";
-  if (diff === 1) return "Besok";
-  if (diff < 0) return "Terlambat!";
-  return `${diff} hari lagi`;
-};
+// ✅ EVENT MENDATANG (BESOK = H+1)
+const upcomingEvents = computed(() => {
+  const start = startOfToday();
+  start.setDate(start.getDate() + 1); // BESOK (H+1)
 
-const statusLabel = (status) => {
-  const labels = {
-    pending: "Pending",
-    in_progress: "Progress",
-    completed: "Selesai",
-  };
-  return labels[status] || status;
-};
+  const end = new Date(start);
+  end.setDate(start.getDate() + 7);
 
-const statusIcon = (status) => {
-  const icons = {
-    pending: Clock,
-    in_progress: Activity,
-    completed: CheckCircle2,
-  };
-  return icons[status] || Clock;
-};
+  return events.value
+    .filter((ev) => {
+      const d = new Date(ev.event_date);
+      return d >= start && d <= end;
+    })
+    .sort((a, b) => new Date(a.event_date) - new Date(b.event_date))
+    .slice(0, 5);
+});
 
-const statusIconColor = (status) => {
-  const colors = {
-    pending: "text-yellow-600",
-    in_progress: "text-blue-600",
-    completed: "text-green-600",
-  };
-  return colors[status] || "text-slate-600";
-};
+/* ================= TASKS ================= */
+const taskStats = computed(() => ({
+  pending: tasks.value.filter((t) => t.status === "pending").length,
+  in_progress: tasks.value.filter((t) => t.status === "in_progress").length,
+  completed: tasks.value.filter((t) => t.status === "completed").length,
+  cancelled: tasks.value.filter((t) => t.status === "cancelled").length,
+}));
 
-const statusBadgeColor = (status) => {
-  const colors = {
-    pending: "bg-yellow-100 text-yellow-700",
-    in_progress: "bg-blue-100 text-blue-700",
-    completed: "bg-green-100 text-green-700",
-  };
-  return colors[status] || "bg-slate-100 text-slate-700";
-};
+const totalTasks = computed(() => tasks.value.length);
 
+const completionRate = computed(() =>
+  totalTasks.value
+    ? Math.round((taskStats.value.completed / totalTasks.value) * 100)
+    : 0
+);
+
+const urgentTasks = computed(() =>
+  tasks.value.filter((t) => {
+    if (["completed", "cancelled"].includes(t.status)) return false;
+    const due = new Date(t.due_date);
+    const today = startOfToday();
+    const diffDays = Math.ceil((due - today) / 86400000);
+    return diffDays >= -5 && diffDays <= 5;
+  })
+);
+
+const recentTasks = computed(() =>
+  [...tasks.value]
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    .slice(0, 5)
+);
+
+/* ================= CALENDAR HELPERS ================= */
+const eventsForDay = (date) =>
+  events.value.filter((ev) => sameLocalDay(ev.event_date, date));
+
+const hasEvents = (date) => eventsForDay(date).length > 0;
+
+const isToday = (date) => sameLocalDay(date, new Date());
+
+/* ================= UI HELPERS ================= */
 const categoryIcon = (category) => {
   const icons = {
-    meeting: CalendarIcon,
+    meeting: Calendar,
     deadline: Timer,
     personal: UserRound,
   };
   return icons[category] || Pin;
 };
 
-const tagColor = (category) => {
-  return (
-    {
-      meeting: "bg-blue-100 text-blue-700",
-      deadline: "bg-red-100 text-red-700",
-      personal: "bg-green-100 text-green-700",
-    }[category] || "bg-slate-100 text-slate-700"
-  );
+const formatDate = (dateStr) =>
+  new Date(dateStr).toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "short",
+  });
+
+const formatTime = (timeStr) => timeStr?.slice(0, 5) || "";
+
+const getDaysUntil = (dateStr) => {
+  const due = new Date(dateStr);
+  const today = startOfToday();
+  const diffDays = Math.ceil((due - today) / 86400000);
+
+  if (diffDays < 0) return `Terlambat ${Math.abs(diffDays)} hari`;
+  if (diffDays === 0) return "Hari ini";
+  if (diffDays === 1) return "Besok";
+  return `${diffDays} hari lagi`;
 };
 
-// NAVIGATION
-const prevMonth = () => {
-  currentMonth.value--;
-  if (currentMonth.value < 0) {
-    currentMonth.value = 11;
-    currentYear.value--;
-  }
+const getDaysUntilClass = (dateStr) => {
+  const d = Math.ceil((new Date(dateStr) - startOfToday()) / 86400000);
+
+  if (d < 0) return "text-red-600 w-4 h-4";
+  if (d === 0) return "text-orange-600 w-4 h-4";
+  if (d <= 2) return "text-yellow-600 w-4 h-4";
+  return "text-slate-600 w-4 h-4";
 };
 
-const nextMonth = () => {
-  currentMonth.value++;
-  if (currentMonth.value > 11) {
-    currentMonth.value = 0;
-    currentYear.value++;
-  }
+const getDaysUntilTextClass = (dateStr) => {
+  const d = Math.ceil((new Date(dateStr) - startOfToday()) / 86400000);
+
+  if (d < 0) return "text-red-600";
+  if (d === 0) return "text-orange-600";
+  if (d <= 2) return "text-yellow-600";
+  return "text-slate-600";
 };
 </script>
 
@@ -741,5 +750,24 @@ const nextMonth = () => {
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Custom scrollbar untuk area yang scrollable */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 </style>

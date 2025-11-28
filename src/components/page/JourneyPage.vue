@@ -1,6 +1,6 @@
 <template>
   <section
-    class="relative w-full min-h-screen pt-10 pb-20 px-6 md:px-12 lg:px-16 bg-linear-to-br from-[#F6FBFF] via-[#EEF7FF] to-[#F3F8FF]"
+    class="relative w-full min-h-screen pt-10 pb-20 px-6 md:px-12 lg:px-16 bg-white/70 backdrop-blur-xl rounded-[2.5rem] shadow-xl border border-white/40"
   >
     <!-- HEADER -->
     <div class="flex items-center justify-between mb-6">
@@ -25,7 +25,7 @@
     </div>
 
     <!-- SUMMARY BAR -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
       <div
         class="bg-white/60 backdrop-blur-sm p-4 rounded-2xl shadow-sm border-l-4 border-yellow-400"
       >
@@ -79,6 +79,24 @@
           </div>
         </div>
       </div>
+
+      <div
+        class="bg-white/60 backdrop-blur-sm p-4 rounded-2xl shadow-sm border-l-4 border-red-400"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-slate-600 mb-1">Cancelled</p>
+            <p class="text-3xl font-bold text-slate-900">
+              {{ tasksByStatus.cancelled }}
+            </p>
+          </div>
+          <div
+            class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center"
+          >
+            <XCircle class="w-6 h-6 text-red-600" />
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- FILTER TABS -->
@@ -86,7 +104,13 @@
       class="flex items-center gap-2 mb-6 bg-white/60 backdrop-blur-sm p-2 rounded-2xl shadow-sm w-fit"
     >
       <button
-        v-for="status in ['all', 'pending', 'in_progress', 'completed']"
+        v-for="status in [
+          'all',
+          'pending',
+          'in_progress',
+          'completed',
+          'cancelled',
+        ]"
         :key="status"
         @click="filterStatus = status"
         :class="[
@@ -103,7 +127,9 @@
             ? "Pending"
             : status === "in_progress"
             ? "Progress"
-            : "Success"
+            : status === "completed"
+            ? "Success"
+            : "Cancelled"
         }}
       </button>
     </div>
@@ -130,7 +156,9 @@
                   ? "Pending"
                   : task.status === "in_progress"
                   ? "Progress"
-                  : "Success"
+                  : task.status === "completed"
+                  ? "Success"
+                  : "Cancelled"
               }}
             </span>
             <button
@@ -297,7 +325,7 @@
                   <Tag class="w-4 h-4 text-[#3B6A9E]" />
                   Status Task
                 </label>
-                <div class="grid grid-cols-3 gap-3">
+                <div class="grid grid-cols-4 gap-3">
                   <button
                     v-for="status in statusOptions"
                     :key="status.value"
@@ -397,7 +425,9 @@
                           ? "Pending"
                           : selectedTask?.status === "in_progress"
                           ? "In Progress"
-                          : "Completed"
+                          : selectedTask?.status === "completed"
+                          ? "Completed"
+                          : "Cancelled"
                       }}
                     </span>
                   </div>
@@ -491,6 +521,7 @@ import {
   Tag,
   ChevronRight,
   ListTodo,
+  XCircle,
 } from "lucide-vue-next";
 
 import { supabase } from "../../lib/supabase.js";
@@ -539,17 +570,33 @@ const statusOptions = [
     iconDefault: "text-green-600",
     textActive: "text-white",
   },
+  {
+    value: "cancelled",
+    label: "Cancelled",
+    icon: XCircle,
+    bgActive: "bg-gradient-to-br from-red-500 to-red-600",
+    iconActive: "text-white",
+    iconDefault: "text-red-600",
+    textActive: "text-white",
+  },
 ];
 
 // FETCH TASKS
 const fetchTasks = async () => {
   const user = (await supabase.auth.getUser()).data.user;
   if (!user) return;
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("tasks")
     .select("*")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Fetch tasks error:", error);
+    tasks.value = [];
+    return;
+  }
+
   tasks.value = data || [];
 };
 
@@ -560,6 +607,7 @@ const tasksByStatus = computed(() => ({
   pending: tasks.value.filter((t) => t.status === "pending").length,
   in_progress: tasks.value.filter((t) => t.status === "in_progress").length,
   completed: tasks.value.filter((t) => t.status === "completed").length,
+  cancelled: tasks.value.filter((t) => t.status === "cancelled").length,
 }));
 
 const filteredTasks = computed(() => {
@@ -582,6 +630,7 @@ const statusIcon = (status) => {
     pending: Clock,
     in_progress: Activity,
     completed: CheckCircle2,
+    cancelled: XCircle,
   };
   return icons[status] || Clock;
 };
@@ -591,6 +640,7 @@ const statusBadgeColor = (status) => {
     pending: "bg-yellow-100 text-yellow-700",
     in_progress: "bg-blue-100 text-blue-700",
     completed: "bg-green-100 text-green-700",
+    cancelled: "bg-red-100 text-red-700",
   };
   return colors[status] || "bg-slate-100 text-slate-700";
 };
@@ -600,6 +650,7 @@ const taskBorderColor = (status) => {
     pending: "border-yellow-200 hover:border-yellow-400",
     in_progress: "border-blue-200 hover:border-blue-400",
     completed: "border-green-200 hover:border-green-400",
+    cancelled: "border-red-200 hover:border-red-400",
   };
   return colors[status] || "border-slate-200";
 };
@@ -609,6 +660,7 @@ const detailHeaderColor = (status) => {
     pending: "bg-gradient-to-r from-yellow-500 to-yellow-600",
     in_progress: "bg-gradient-to-r from-blue-500 to-blue-600",
     completed: "bg-gradient-to-r from-green-500 to-green-600",
+    cancelled: "bg-gradient-to-r from-red-500 to-red-600",
   };
   return colors[status] || "bg-gradient-to-r from-[#3B6A9E] to-[#5a8bc4]";
 };
@@ -627,7 +679,6 @@ const openAddModal = () => {
 };
 
 const openEditModal = (task) => {
-  // Validasi task tidak null/undefined
   if (!task || !task.id) {
     console.error("Task data is invalid:", task);
     return;
@@ -667,10 +718,8 @@ const closeDetailModal = () => {
 };
 
 const editFromDetail = () => {
-  // Simpan referensi task sebelum close modal
   const taskToEdit = { ...selectedTask.value };
   closeDetailModal();
-  // Tunggu sebentar untuk transisi modal
   setTimeout(() => {
     openEditModal(taskToEdit);
   }, 100);

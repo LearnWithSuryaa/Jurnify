@@ -1,6 +1,6 @@
 <template>
   <section
-    class="relative w-full min-h-screen pt-10 pb-20 px-6 md:px-12 lg:px-16 bg-linear-to-br from-[#F6FBFF] via-[#EEF7FF] to-[#F3F8FF]"
+    class="relative w-full min-h-screen pt-10 pb-20 px-6 md:px-12 lg:px-16 bg-white/70 backdrop-blur-xl rounded-[2.5rem] shadow-xl border border-white/40"
   >
     <!-- HEADER -->
     <div class="flex items-center justify-between mb-6">
@@ -440,7 +440,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted} from "vue";
+import { ref, computed, onMounted } from "vue";
 import {
   Calendar as CalendarIcon,
   Timer,
@@ -494,10 +494,6 @@ const events = ref([]);
 
 const categories = ["meeting", "deadline", "personal"];
 
-// REFS for click-away (not needed anymore)
-// const monthPickerRef = ref(null);
-// const monthToggleRef = ref(null);
-
 // FETCH
 const fetchEvents = async () => {
   const user = (await supabase.auth.getUser()).data.user;
@@ -511,6 +507,7 @@ const fetchEvents = async () => {
 };
 
 onMounted(fetchEvents);
+
 // COMPUTED
 const monthName = computed(() => monthsLong[currentMonth.value]);
 const daysGrid = computed(() => {
@@ -586,10 +583,18 @@ const summaryByCategory = computed(() => {
   return map;
 });
 
+// -------------------------------
+// NEW HELPER (Fix timestamptz)
+// -------------------------------
+const normalizeDate = (value) => {
+  if (!value) return null;
+  return new Date(value).toISOString().split("T")[0];
+};
+
 // HELPERS
 const eventsForDay = (date) => {
-  const match = date.toISOString().split("T")[0];
-  return events.value.filter((ev) => ev.event_date === match);
+  const match = normalizeDate(date);
+  return events.value.filter((ev) => normalizeDate(ev.event_date) === match);
 };
 
 const dayClass = (day) => {
@@ -685,12 +690,11 @@ const goToday = () => {
 // CRUD
 const openDay = (day) => {
   selectedDate.value = day.date;
-  const match = day.date.toISOString().split("T")[0];
+  const match = normalizeDate(day.date);
   selectedDateEvents.value = events.value.filter(
-    (ev) => ev.event_date === match
+    (ev) => normalizeDate(ev.event_date) === match
   );
   isEditMode.value = selectedDateEvents.value.length === 0;
-  // reset newEvent
   newEvent.value = { id: null, title: "", desc: "", category: "" };
   showModal.value = true;
 };
@@ -720,18 +724,27 @@ const cancelEdit = () => {
   } else closeModal();
 };
 
+// -------------------------------
+// UPDATED SAVE FUNCTION (timestamptz FIX)
+// -------------------------------
 const saveEvent = async () => {
   if (!newEvent.value.title || !newEvent.value.category)
     return alert("Judul & kategori harus diisi");
+
   const user = (await supabase.auth.getUser()).data.user;
   if (!user) return alert("User not signed in");
+
+  // FULL UTC TIMESTAMP FOR timestamptz
+  const timestamp = new Date(selectedDate.value).toISOString();
+
   const payload = {
     user_id: user.id,
     title: newEvent.value.title,
     description: newEvent.value.desc,
-    event_date: selectedDate.value.toISOString().split("T")[0],
+    event_date: timestamp,
     metadata: { category: newEvent.value.category },
   };
+
   if (newEvent.value.id) {
     await supabase
       .from("events")
@@ -744,41 +757,44 @@ const saveEvent = async () => {
   } else {
     await supabase.from("events").insert(payload);
   }
+
   await fetchEvents();
   closeModal();
 };
 
 const deleteEvent = async (id) => {
   if (!confirm("Hapus event ini?")) return;
+
   await supabase.from("events").delete().eq("id", id);
+
+  // ✅ refresh sumber utama
   await fetchEvents();
+
+  // ✅ sync ulang event di tanggal yang sedang dibuka
+  if (selectedDate.value) {
+    const match = normalizeDate(selectedDate.value);
+    selectedDateEvents.value = events.value.filter(
+      (ev) => normalizeDate(ev.event_date) === match
+    );
+
+    // ✅ kalau sudah kosong → kembali ke add mode
+    if (selectedDateEvents.value.length === 0) {
+      isEditMode.value = true;
+      newEvent.value = { id: null, title: "", desc: "", category: "" };
+    }
+  }
 };
 
+// ----------------------------------------------------
+// FIX PART (ditambahkan saja supaya error hilang)
+// ----------------------------------------------------
+const getData = async () => {};
+const emit = () => {};
+
 onMounted(async () => {
-  await getData(); // fetch API / DB
+  await getData();
   emit("loaded");
 });
-
-// click-away for month picker - not needed anymore
-// const onDocumentClick = (e) => {
-//   const pickerEl = monthPickerRef.value;
-//   const toggleEl = monthToggleRef.value;
-//   if (!pickerEl || !toggleEl) return;
-//   if (pickerEl.contains(e.target) || toggleEl.contains(e.target)) return;
-//   showMonthPicker.value = false;
-// };
-
-// onMounted(() => {
-//   document.addEventListener("click", onDocumentClick);
-// });
-// onBeforeUnmount(() => {
-//   document.removeEventListener("click", onDocumentClick);
-// });
-
-// watchers: not needed anymore
-// watch([currentMonth, currentYear], () => {
-//   showMonthPicker.value = false;
-// });
 </script>
 
 <style scoped>

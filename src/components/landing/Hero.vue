@@ -50,14 +50,15 @@
         <!-- BUTTONS -->
         <div class="flex gap-4 mt-2">
           <router-link
-            to="/register"
+            to="/login"
             class="px-8 py-3 bg-[#3B6A9E] hover:bg-[#365F90] text-white rounded-2xl font-semibold shadow-md transition-all active:scale-95 inline-block text-center"
           >
             Mulai Sekarang
           </router-link>
 
           <button
-            class="px-8 py-3 bg-white/20 backdrop-blur-xl border border-white/30 text-[#2F3A4B] rounded-2xl font-semibold shadow-sm hover:bg-white/30 transition-all active:scale-95"
+            @click="scrollToFeature"
+            class="px-8 py-3 cursor-pointer bg-white/20 backdrop-blur-xl border border-white/30 text-[#2F3A4B] rounded-2xl font-semibold shadow-sm hover:bg-white/30 transition-all active:scale-95"
           >
             Lihat Fitur
           </button>
@@ -121,6 +122,16 @@ onMounted(() => {
 
   observer.observe(heroSection.value);
 });
+
+const scrollToFeature = () => {
+  const section = document.getElementById("fitur");
+  if (!section) return;
+
+  section.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  });
+};
 </script>
 
 <style scoped>

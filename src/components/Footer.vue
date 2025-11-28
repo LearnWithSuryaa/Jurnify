@@ -23,7 +23,9 @@
           <router-link to="/about" class="hover:text-black transition"
             >About</router-link
           >
-          <a href="#" class="hover:text-black transition">Contact</a>
+          <router-link to="/contact" class="hover:text-black transition"
+            >About</router-link
+          >
         </nav>
 
         <!-- Year & tagline -->

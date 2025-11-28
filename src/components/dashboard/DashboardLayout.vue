@@ -44,20 +44,20 @@
           v-for="item in mainMenu"
           :key="item.id"
           @click="goTo(item.path)"
-          class="group flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold relative border border-transparent hover:border-white/40 hover:bg-white/40 hover:shadow-xl active:scale-[0.97]"
+          class="group flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold relative border"
           :class="[
             isActive(item.path)
-              ? 'bg-[#3B6A9E] text-white shadow-lg'
-              : 'text-[#2F3A4B]/75',
+              ? 'bg-[#3B6A9E] text-white shadow-lg border-transparent cursor-default'
+              : 'text-[#2F3A4B]/75 border-transparent hover:border-white/40 hover:bg-white/40 hover:shadow-xl active:scale-[0.97]',
             isCollapsed && 'justify-center',
           ]"
         >
           <component :is="item.icon" class="w-6 h-6 transition-all" />
           <span v-if="!isCollapsed">{{ item.label }}</span>
 
-          <!-- Tooltip when collapsed -->
+          <!-- Tooltip hanya untuk NON-ACTIVE -->
           <span
-            v-if="isCollapsed"
+            v-if="isCollapsed && !isActive(item.path)"
             class="absolute left-[72px] bg-[#2F3A4B] text-white text-sm px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 whitespace-nowrap transition-all"
           >
             {{ item.label }}
@@ -78,11 +78,11 @@
           v-for="item in bottomMenu"
           :key="item.id"
           @click="goTo(item.path)"
-          class="group flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold relative border border-transparent hover:border-white/40 hover:bg-white/40 hover:shadow-xl active:scale-[0.97]"
+          class="group flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold relative border"
           :class="[
             isActive(item.path)
-              ? 'bg-[#3B6A9E] text-white shadow-lg'
-              : 'text-[#2F3A4B]/75',
+              ? 'bg-[#3B6A9E] text-white shadow-lg border-transparent cursor-default'
+              : 'text-[#2F3A4B]/75 border-transparent hover:border-white/40 hover:bg-white/40 hover:shadow-xl active:scale-[0.97]',
             isCollapsed && 'justify-center',
           ]"
         >
@@ -90,7 +90,7 @@
           <span v-if="!isCollapsed">{{ item.label }}</span>
 
           <span
-            v-if="isCollapsed"
+            v-if="isCollapsed && !isActive(item.path)"
             class="absolute left-[72px] bg-[#2F3A4B] text-white text-sm px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 whitespace-nowrap transition-all"
           >
             {{ item.label }}
@@ -139,7 +139,7 @@ const contentInner = ref(null);
 
 /* MENU DATA */
 const mainMenu = [
-  { id: 1, label: "Dashboard", icon: HomeIcon, path: "/dashboard" },
+  { id: 1, label: "Home", icon: HomeIcon, path: "/dashboard" },
   {
     id: 2,
     label: "Journey",

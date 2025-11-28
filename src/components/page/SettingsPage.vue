@@ -1,41 +1,42 @@
 <template>
   <section
-    class="relative w-full min-h-screen pt-10 pb-20 px-6 md:px-12 lg:px-16 bg-linear-to-br from-[#F6FBFF] via-[#EEF7FF] to-[#F3F8FF]"
+    class="relative w-full min-h-screen pt-10 pb-20 px-6 md:px-12 lg:px-16 bg-white/70 backdrop-blur-xl rounded-[2.5rem] shadow-xl border border-white/40"
   >
     <!-- HEADER -->
     <div class="mb-8">
       <div class="flex items-center justify-between mb-2">
         <div>
-          <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-2">
+          <h1 class="text-4xl md:text-5xl font-extrabold text-black mb-2">
             Settings
           </h1>
-          <p class="text-slate-600 text-lg">Kelola preferensi dan akun Anda</p>
+          <p class="text-black/60 text-lg">Kelola preferensi dan akun Anda</p>
         </div>
       </div>
     </div>
 
     <!-- SETTINGS GRID -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- LEFT COLUMN - Profile Card -->
+      <!-- LEFT COLUMN -->
       <div class="lg:col-span-1 space-y-6">
         <!-- Profile -->
         <div
-          class="bg-white/70 backdrop-blur-md rounded-2xl shadow-md p-6 border-2 border-transparent hover:border-[#3B6A9E]/30 transition-all"
+          class="bg-white/80 backdrop-blur-md rounded-2xl shadow-md p-6 border-2 border-transparent hover:border-[#8FABD4]/40 transition-all"
         >
           <div class="text-center">
             <div
-              class="w-24 h-24 bg-linear-to-br from-[#3B6A9E] to-[#5a8bc4] rounded-full flex items-center justify-center mx-auto mb-4"
+              class="w-24 h-24 bg-linear-to-br from-[#4A70A9] to-[#8FABD4] rounded-full flex items-center justify-center mx-auto mb-4"
             >
               <User class="w-12 h-12 text-white" />
             </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-1">
+
+            <h3 class="text-xl font-bold text-black mb-1">
               {{ userEmail || "User" }}
             </h3>
-            <p class="text-sm text-slate-600 mb-4">Journey User</p>
+            <p class="text-sm text-black/60 mb-4">Journey User</p>
 
             <button
               @click="showEditProfileModal = true"
-              class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#3B6A9E] text-white rounded-xl hover:bg-[#2f5680] transition font-semibold"
+              class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#4A70A9] hover:bg-[#3f6194] text-white rounded-xl transition font-semibold"
             >
               <Edit3 class="w-4 h-4" />
               Edit Profile
@@ -45,33 +46,31 @@
 
         <!-- Quick Stats -->
         <div
-          class="bg-white/70 backdrop-blur-md rounded-2xl shadow-md p-6 border-2 border-transparent hover:border-[#3B6A9E]/30 transition-all"
+          class="bg-white/80 backdrop-blur-md rounded-2xl shadow-md p-6 border-2 border-transparent hover:border-[#8FABD4]/40 transition-all"
         >
-          <h3
-            class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2"
-          >
-            <BarChart3 class="w-5 h-5 text-[#3B6A9E]" />
+          <h3 class="text-lg font-bold text-black mb-4 flex items-center gap-2">
+            <BarChart3 class="w-5 h-5 text-[#4A70A9]" />
             Statistik Akun
           </h3>
 
           <div class="space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-sm text-slate-600">Total Tasks</span>
-              <span class="text-lg font-bold text-slate-900">
+            <div class="flex justify-between">
+              <span class="text-sm text-black/60">Total Tasks</span>
+              <span class="text-lg font-bold text-black">
                 {{ totalTasks }}
               </span>
             </div>
 
-            <div class="flex items-center justify-between">
-              <span class="text-sm text-slate-600">Total Events</span>
-              <span class="text-lg font-bold text-slate-900">
+            <div class="flex justify-between">
+              <span class="text-sm text-black/60">Total Events</span>
+              <span class="text-lg font-bold text-black">
                 {{ totalEvents }}
               </span>
             </div>
 
-            <div class="flex items-center justify-between">
-              <span class="text-sm text-slate-600">Completed</span>
-              <span class="text-lg font-bold text-green-600">
+            <div class="flex justify-between">
+              <span class="text-sm text-black/60">Completed</span>
+              <span class="text-lg font-bold text-[#4A70A9]">
                 {{ completedTasks }}
               </span>
             </div>
@@ -79,228 +78,64 @@
         </div>
       </div>
 
-      <!-- RIGHT COLUMN - Settings Options -->
+      <!-- RIGHT COLUMN -->
       <div class="lg:col-span-2 space-y-6">
         <!-- Account Settings -->
         <div
-          class="bg-white/70 backdrop-blur-md rounded-2xl shadow-md p-6 border-2 border-transparent hover:border-[#3B6A9E]/30 transition-all"
+          class="bg-white/80 backdrop-blur-md rounded-2xl shadow-md p-6 border-2 border-transparent hover:border-[#8FABD4]/40 transition-all"
         >
           <div class="flex items-center gap-3 mb-5">
             <div
-              class="w-10 h-10 bg-linear-to-br from-[#3B6A9E] to-[#5a8bc4] rounded-xl flex items-center justify-center"
+              class="w-10 h-10 bg-linear-to-br from-[#4A70A9] to-[#8FABD4] rounded-xl flex items-center justify-center"
             >
               <UserCog class="w-5 h-5 text-white" />
             </div>
             <div>
-              <h2 class="text-xl font-bold text-slate-900">Akun</h2>
-              <p class="text-xs text-slate-600">Kelola informasi akun Anda</p>
+              <h2 class="text-xl font-bold text-black">Akun</h2>
+              <p class="text-xs text-black/60">Kelola informasi akun Anda</p>
             </div>
           </div>
 
           <div class="space-y-3">
             <div
-              class="p-4 rounded-xl border-2 border-slate-100 hover:border-[#3B6A9E]/30 transition-all group cursor-pointer"
+              class="p-4 rounded-xl border-2 border-black/10 hover:border-[#4A70A9]/40 transition-all group cursor-pointer"
               @click="showChangePasswordModal = true"
             >
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
+              <div class="flex justify-between items-center">
+                <div class="flex gap-3 items-center">
                   <div
-                    class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center group-hover:bg-[#3B6A9E]/10 transition"
+                    class="w-10 h-10 bg-[#8FABD4]/20 rounded-lg flex items-center justify-center"
                   >
-                    <Lock
-                      class="w-5 h-5 text-slate-600 group-hover:text-[#3B6A9E] transition"
-                    />
+                    <Lock class="w-5 h-5 text-[#4A70A9]" />
                   </div>
                   <div>
-                    <h4 class="font-semibold text-slate-900">Ganti Password</h4>
-                    <p class="text-xs text-slate-600">
-                      Ubah password akun Anda
-                    </p>
+                    <h4 class="font-semibold text-black">Ganti Password</h4>
+                    <p class="text-xs text-black/60">Ubah password akun Anda</p>
                   </div>
                 </div>
-                <ChevronRight
-                  class="w-5 h-5 text-slate-400 group-hover:text-[#3B6A9E] transition"
-                />
+                <ChevronRight class="w-5 h-5 text-[#4A70A9]" />
               </div>
             </div>
 
             <div
-              class="p-4 rounded-xl border-2 border-slate-100 hover:border-[#3B6A9E]/30 transition-all group cursor-pointer"
+              class="p-4 rounded-xl border-2 border-black/10 hover:border-[#4A70A9]/40 transition-all group cursor-pointer"
               @click="showEditProfileModal = true"
             >
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
+              <div class="flex justify-between items-center">
+                <div class="flex gap-3 items-center">
                   <div
-                    class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center group-hover:bg-[#3B6A9E]/10 transition"
+                    class="w-10 h-10 bg-[#8FABD4]/20 rounded-lg flex items-center justify-center"
                   >
-                    <Mail
-                      class="w-5 h-5 text-slate-600 group-hover:text-[#3B6A9E] transition"
-                    />
+                    <Mail class="w-5 h-5 text-[#4A70A9]" />
                   </div>
                   <div>
-                    <h4 class="font-semibold text-slate-900">Email</h4>
-                    <p class="text-xs text-slate-600">
+                    <h4 class="font-semibold text-black">Email</h4>
+                    <p class="text-xs text-black/60">
                       {{ userEmail || "Belum ada email" }}
                     </p>
                   </div>
                 </div>
-                <ChevronRight
-                  class="w-5 h-5 text-slate-400 group-hover:text-[#3B6A9E] transition"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Preferences -->
-        <div
-          class="bg-white/70 backdrop-blur-md rounded-2xl shadow-md p-6 border-2 border-transparent hover:border-[#3B6A9E]/30 transition-all"
-        >
-          <div class="flex items-center gap-3 mb-5">
-            <div
-              class="w-10 h-10 bg-linear-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center"
-            >
-              <Settings class="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h2 class="text-xl font-bold text-slate-900">Preferensi</h2>
-              <p class="text-xs text-slate-600">Sesuaikan pengalaman Anda</p>
-            </div>
-          </div>
-
-          <div class="space-y-3">
-            <div
-              class="p-4 rounded-xl border-2 border-slate-100 hover:border-purple-300 transition-all"
-            >
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                  <div
-                    class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center"
-                  >
-                    <Bell class="w-5 h-5 text-purple-600" />
-                  </div>
-                  <div>
-                    <h4 class="font-semibold text-slate-900">Notifikasi</h4>
-                    <p class="text-xs text-slate-600">
-                      Terima pengingat untuk task dan event
-                    </p>
-                  </div>
-                </div>
-                <button
-                  @click="toggleNotifications"
-                  :class="[
-                    'relative w-12 h-6 rounded-full transition-colors',
-                    notifications ? 'bg-[#3B6A9E]' : 'bg-slate-300',
-                  ]"
-                >
-                  <div
-                    :class="[
-                      'absolute top-0.5 w-5 h-5 bg-white rounded-full transition-transform',
-                      notifications ? 'translate-x-6' : 'translate-x-0.5',
-                    ]"
-                  ></div>
-                </button>
-              </div>
-            </div>
-
-            <div
-              class="p-4 rounded-xl border-2 border-slate-100 hover:border-purple-300 transition-all"
-            >
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                  <div
-                    class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center"
-                  >
-                    <Moon class="w-5 h-5 text-purple-600" />
-                  </div>
-                  <div>
-                    <h4 class="font-semibold text-slate-900">Dark Mode</h4>
-                    <p class="text-xs text-slate-600">
-                      Tema gelap untuk mata Anda
-                    </p>
-                  </div>
-                </div>
-                <button
-                  @click="toggleDarkMode"
-                  :class="[
-                    'relative w-12 h-6 rounded-full transition-colors',
-                    darkMode ? 'bg-[#3B6A9E]' : 'bg-slate-300',
-                  ]"
-                >
-                  <div
-                    :class="[
-                      'absolute top-0.5 w-5 h-5 bg-white rounded-full transition-transform',
-                      darkMode ? 'translate-x-6' : 'translate-x-0.5',
-                    ]"
-                  ></div>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Data & Privacy -->
-        <div
-          class="bg-white/70 backdrop-blur-md rounded-2xl shadow-md p-6 border-2 border-transparent hover:border-[#3B6A9E]/30 transition-all"
-        >
-          <div class="flex items-center gap-3 mb-5">
-            <div
-              class="w-10 h-10 bg-linear-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center"
-            >
-              <Shield class="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h2 class="text-xl font-bold text-slate-900">Data & Privasi</h2>
-              <p class="text-xs text-slate-600">Kelola data dan privasi Anda</p>
-            </div>
-          </div>
-
-          <div class="space-y-3">
-            <div
-              class="p-4 rounded-xl border-2 border-slate-100 hover:border-green-300 transition-all group cursor-pointer"
-              @click="exportData"
-            >
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                  <div
-                    class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center"
-                  >
-                    <Download class="w-5 h-5 text-green-600" />
-                  </div>
-                  <div>
-                    <h4 class="font-semibold text-slate-900">Export Data</h4>
-                    <p class="text-xs text-slate-600">
-                      Download semua data Anda
-                    </p>
-                  </div>
-                </div>
-                <ChevronRight
-                  class="w-5 h-5 text-slate-400 group-hover:text-green-600 transition"
-                />
-              </div>
-            </div>
-
-            <div
-              class="p-4 rounded-xl border-2 border-red-100 hover:border-red-300 transition-all group cursor-pointer"
-              @click="confirmDeleteAccount"
-            >
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                  <div
-                    class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center"
-                  >
-                    <Trash2 class="w-5 h-5 text-red-600" />
-                  </div>
-                  <div>
-                    <h4 class="font-semibold text-red-600">Hapus Akun</h4>
-                    <p class="text-xs text-slate-600">
-                      Hapus akun dan semua data secara permanen
-                    </p>
-                  </div>
-                </div>
-                <ChevronRight
-                  class="w-5 h-5 text-slate-400 group-hover:text-red-600 transition"
-                />
+                <ChevronRight class="w-5 h-5 text-[#4A70A9]" />
               </div>
             </div>
           </div>
@@ -308,14 +143,14 @@
 
         <!-- Logout Button -->
         <div
-          class="bg-linear-to-br from-red-500 to-red-600 rounded-2xl shadow-lg p-6 text-white"
+          class="bg-linear-to-br from-[#4A70A9] to-[#8FABD4] rounded-2xl shadow-lg p-6 text-white"
         >
           <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
+            <div class="flex gap-3 items-center">
               <div
-                class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center"
+                class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center"
               >
-                <LogOut class="w-6 h-6 text-white" />
+                <LogOut class="w-6 h-6" />
               </div>
               <div>
                 <h3 class="text-lg font-bold">Keluar dari Akun</h3>
@@ -326,7 +161,7 @@
             </div>
             <button
               @click="handleLogout"
-              class="px-6 py-3 bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-xl transition-all font-semibold flex items-center gap-2"
+              class="px-6 py-3 bg-white/20 hover:bg-white/30 rounded-xl transition-all font-semibold flex items-center gap-2"
             >
               <LogOut class="w-5 h-5" />
               Logout
@@ -335,156 +170,6 @@
         </div>
       </div>
     </div>
-
-    <!-- MODAL EDIT PROFILE -->
-    <teleport to="body">
-      <transition name="modal-fade">
-        <div
-          v-if="showEditProfileModal"
-          class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 px-4"
-          @click="showEditProfileModal = false"
-        >
-          <div
-            class="bg-white rounded-3xl shadow-2xl w-full max-w-md transform transition-all overflow-hidden"
-            @click.stop
-          >
-            <div
-              class="bg-linear-to-r from-[#3B6A9E] to-[#5a8bc4] px-8 py-6 text-white"
-            >
-              <div class="flex items-center justify-between">
-                <div>
-                  <h2 class="text-2xl font-bold">Edit Profile</h2>
-                  <p class="text-sm text-white/80">
-                    Update informasi profil Anda
-                  </p>
-                </div>
-                <button
-                  @click="showEditProfileModal = false"
-                  class="text-white/80 hover:text-white hover:bg-white/20 p-2 rounded-full transition"
-                >
-                  <X class="w-6 h-6" />
-                </button>
-              </div>
-            </div>
-
-            <div class="p-6 space-y-4">
-              <div>
-                <label class="text-sm font-semibold text-slate-700 mb-2 block"
-                  >Email</label
-                >
-                <input
-                  v-model="profileForm.email"
-                  type="email"
-                  placeholder="email@example.com"
-                  class="w-full px-4 py-3 bg-slate-50 rounded-xl border-2 border-slate-200 focus:border-[#3B6A9E] focus:bg-white outline-none transition"
-                />
-              </div>
-
-              <div class="flex gap-3 pt-4">
-                <button
-                  @click="showEditProfileModal = false"
-                  class="flex-1 px-4 py-3 border-2 border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition font-semibold"
-                >
-                  Batal
-                </button>
-                <button
-                  @click="saveProfile"
-                  class="flex-1 px-4 py-3 bg-linear-to-r from-[#3B6A9E] to-[#5a8bc4] text-white rounded-xl hover:shadow-lg transition font-semibold"
-                >
-                  Simpan
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </transition>
-    </teleport>
-
-    <!-- MODAL CHANGE PASSWORD -->
-    <teleport to="body">
-      <transition name="modal-fade">
-        <div
-          v-if="showChangePasswordModal"
-          class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 px-4"
-          @click="showChangePasswordModal = false"
-        >
-          <div
-            class="bg-white rounded-3xl shadow-2xl w-full max-w-md transform transition-all overflow-hidden"
-            @click.stop
-          >
-            <div
-              class="bg-linear-to-r from-[#3B6A9E] to-[#5a8bc4] px-8 py-6 text-white"
-            >
-              <div class="flex items-center justify-between">
-                <div>
-                  <h2 class="text-2xl font-bold">Ganti Password</h2>
-                  <p class="text-sm text-white/80">Update password akun Anda</p>
-                </div>
-                <button
-                  @click="showChangePasswordModal = false"
-                  class="text-white/80 hover:text-white hover:bg-white/20 p-2 rounded-full transition"
-                >
-                  <X class="w-6 h-6" />
-                </button>
-              </div>
-            </div>
-
-            <div class="p-6 space-y-4">
-              <div>
-                <label class="text-sm font-semibold text-slate-700 mb-2 block"
-                  >Password Lama</label
-                >
-                <input
-                  v-model="passwordForm.oldPassword"
-                  type="password"
-                  placeholder="Masukkan password lama"
-                  class="w-full px-4 py-3 bg-slate-50 rounded-xl border-2 border-slate-200 focus:border-[#3B6A9E] focus:bg-white outline-none transition"
-                />
-              </div>
-
-              <div>
-                <label class="text-sm font-semibold text-slate-700 mb-2 block"
-                  >Password Baru</label
-                >
-                <input
-                  v-model="passwordForm.newPassword"
-                  type="password"
-                  placeholder="Masukkan password baru"
-                  class="w-full px-4 py-3 bg-slate-50 rounded-xl border-2 border-slate-200 focus:border-[#3B6A9E] focus:bg-white outline-none transition"
-                />
-              </div>
-
-              <div>
-                <label class="text-sm font-semibold text-slate-700 mb-2 block"
-                  >Konfirmasi Password</label
-                >
-                <input
-                  v-model="passwordForm.confirmPassword"
-                  type="password"
-                  placeholder="Konfirmasi password baru"
-                  class="w-full px-4 py-3 bg-slate-50 rounded-xl border-2 border-slate-200 focus:border-[#3B6A9E] focus:bg-white outline-none transition"
-                />
-              </div>
-
-              <div class="flex gap-3 pt-4">
-                <button
-                  @click="showChangePasswordModal = false"
-                  class="flex-1 px-4 py-3 border-2 border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition font-semibold"
-                >
-                  Batal
-                </button>
-                <button
-                  @click="changePassword"
-                  class="flex-1 px-4 py-3 bg-linear-to-r from-[#3B6A9E] to-[#5a8bc4] text-white rounded-xl hover:shadow-lg transition font-semibold"
-                >
-                  Ubah Password
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </transition>
-    </teleport>
   </section>
 </template>
 
