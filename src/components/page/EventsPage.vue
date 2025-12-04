@@ -114,8 +114,12 @@
         class="rounded-2xl h-32 p-3 border transition cursor-pointer group bg-white/60 backdrop-blur-md shadow-sm hover:shadow-lg hover:scale-[1.01] flex flex-col"
         :class="dayClass(day)"
       >
+        <!-- DATE HEADER -->
         <div class="flex justify-between items-start">
-          <span :class="dateLabelClass(day)">{{ day.date.getDate() }}</span>
+          <span :class="dateLabelClass(day)">
+            {{ day.date.getDate() }}
+          </span>
+
           <span
             v-if="eventsForDay(day.date).length"
             class="text-[11px] px-2 py-1 rounded-md font-semibold truncate"
@@ -125,11 +129,13 @@
           </span>
         </div>
 
+        <!-- EVENTS LIST -->
         <div class="mt-2 space-y-1 overflow-y-auto">
           <div
             v-for="ev in eventsForDay(day.date)"
             :key="ev.id"
-            class="text-[11px] px-2 py-1 rounded-xl font-medium truncate flex items-center gap-2"
+            @click.stop="openEventDetail(ev)"
+            class="text-[11px] px-2 py-1 rounded-xl font-medium truncate flex items-center gap-2 cursor-pointer"
             :class="tagColor(ev.metadata?.category)"
           >
             <component
@@ -139,6 +145,7 @@
             <span class="truncate">{{ ev.title }}</span>
           </div>
 
+          <!-- EMPTY STATE -->
           <div
             v-if="eventsForDay(day.date).length === 0"
             class="text-[11px] px-2 py-1 rounded-xl text-slate-400 italic"
@@ -436,11 +443,99 @@
         </div>
       </transition>
     </teleport>
+    <teleport to="body">
+      <transition name="modal-fade">
+        <div
+          v-if="showDetailModal"
+          class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 px-4"
+          @click="showDetailModal = false"
+        >
+          <div
+            class="bg-white w-full max-w-lg rounded-3xl shadow-[0_8px_40px_-4px_rgba(0,0,0,0.2)] overflow-hidden animate-fadeIn"
+            @click.stop
+          >
+            <!-- HEADER -->
+            <div
+              class="flex items-center justify-between px-6 py-5 border-b border-slate-200"
+            >
+              <h3 class="text-xl font-semibold text-slate-800 leading-tight">
+                {{ selectedEvent?.title }}
+              </h3>
+
+              <button
+                @click="showDetailModal = false"
+                class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-100 transition"
+              >
+                <X class="w-5 h-5 text-slate-600" />
+              </button>
+            </div>
+
+            <!-- BODY -->
+            <div class="px-6 py-5 space-y-4">
+              <!-- Description -->
+              <p class="text-slate-600 leading-relaxed">
+                {{ selectedEvent?.description || "Tidak ada deskripsi" }}
+              </p>
+
+              <!-- Date -->
+              <div class="flex items-center gap-2 text-sm text-slate-600">
+                <CalendarIcon class="w-4 h-4 text-[#3B6A9E]" />
+                {{
+                  new Date(selectedEvent?.event_date).toLocaleDateString(
+                    "id-ID",
+                    {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    }
+                  )
+                }}
+              </div>
+
+              <!-- Category -->
+              <div
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold shadow-sm"
+                :class="tagColor(selectedEvent?.metadata?.category)"
+              >
+                <component
+                  :is="categoryIcon(selectedEvent?.metadata?.category)"
+                  class="w-4 h-4"
+                />
+                {{ selectedEvent?.metadata?.category }}
+              </div>
+            </div>
+
+            <!-- FOOTER -->
+            <div
+              class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3"
+            >
+              <button
+                @click="showDetailModal = false"
+                class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 transition"
+              >
+                Tutup
+              </button>
+
+              <button
+                @click="
+                  startEdit(selectedEvent);
+                  showDetailModal = false;
+                "
+                class="px-4 py-2 rounded-xl bg-[#3B6A9E] text-white hover:bg-[#345d8a] transition shadow-sm"
+              >
+                Edit
+              </button>
+            </div>
+          </div>
+        </div>
+      </transition>
+    </teleport>
   </section>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import {
   Calendar as CalendarIcon,
   Timer,
@@ -457,6 +552,11 @@ import {
 } from "lucide-vue-next";
 
 import { supabase } from "../../lib/supabase.js";
+
+const emit = defineEmits(["loaded"]);
+
+const router = useRouter();
+const route = useRoute();
 
 // STATE
 const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -477,6 +577,7 @@ const monthsShort = [
 const monthsLong = Array.from({ length: 12 }).map((_, i) =>
   new Date(0, i).toLocaleString("id-ID", { month: "long" })
 );
+
 const today = new Date();
 const currentMonth = ref(today.getMonth());
 const currentYear = ref(today.getFullYear());
@@ -494,22 +595,68 @@ const events = ref([]);
 
 const categories = ["meeting", "deadline", "personal"];
 
-// FETCH
+const showDetailModal = ref(false);
+const selectedEvent = ref(null);
+
+// FETCH events from supabase
 const fetchEvents = async () => {
-  const user = (await supabase.auth.getUser()).data.user;
-  if (!user) return;
-  const { data } = await supabase
-    .from("events")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("event_date", { ascending: true });
-  events.value = data || [];
+  try {
+    const userResp = await supabase.auth.getUser();
+    const user = userResp?.data?.user;
+    if (!user) {
+      events.value = [];
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("events")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("event_date", { ascending: true });
+
+    if (error) {
+      console.error("fetchEvents error:", error);
+      events.value = [];
+      return;
+    }
+
+    events.value = data || [];
+
+    if (selectedDate.value) {
+      const match = normalizeDate(selectedDate.value);
+      selectedDateEvents.value = events.value.filter(
+        (ev) => normalizeDate(ev.event_date) === match
+      );
+    }
+  } catch (err) {
+    console.error("fetchEvents exception:", err);
+  }
+
+  // AUTO-OPEN detail event setelah data tersedia
+  if (route.query.open) {
+    setTimeout(() => {
+      openDetailById(route.query.open);
+    }, 0);
+  }
 };
 
-onMounted(fetchEvents);
+// OPEN detail by ID (dipanggil dari Home)
+const openDetailById = (id) => {
+  // FIX: UUID harus dicocokkan sebagai string
+  const ev = events.value.find((e) => e.id === id);
+  if (!ev) return;
+  selectedEvent.value = ev;
+  showDetailModal.value = true;
+};
+
+onMounted(async () => {
+  await fetchEvents();
+  emit("loaded");
+});
 
 // COMPUTED
 const monthName = computed(() => monthsLong[currentMonth.value]);
+
 const daysGrid = computed(() => {
   const firstDay = new Date(currentYear.value, currentMonth.value, 1);
   const startDay = firstDay.getDay();
@@ -518,20 +665,22 @@ const daysGrid = computed(() => {
     currentMonth.value + 1,
     0
   ).getDate();
+
   const days = [];
 
-  for (let i = 0; i < startDay; i++) {
+  for (let i = 0; i < startDay; i++)
     days.push({
       date: new Date(currentYear.value, currentMonth.value, i - startDay + 1),
       isCurrentMonth: false,
     });
-  }
+
   for (let d = 1; d <= lastDate; d++)
     days.push({
       date: new Date(currentYear.value, currentMonth.value, d),
       isCurrentMonth: true,
     });
-  while (days.length < 42) {
+
+  while (days.length < 42)
     days.push({
       date: new Date(
         currentYear.value,
@@ -540,7 +689,7 @@ const daysGrid = computed(() => {
       ),
       isCurrentMonth: false,
     });
-  }
+
   return days;
 });
 
@@ -583,13 +732,8 @@ const summaryByCategory = computed(() => {
   return map;
 });
 
-// -------------------------------
-// NEW HELPER (Fix timestamptz)
-// -------------------------------
-const normalizeDate = (value) => {
-  if (!value) return null;
-  return new Date(value).toISOString().split("T")[0];
-};
+const normalizeDate = (value) =>
+  value ? new Date(value).toISOString().split("T")[0] : null;
 
 // HELPERS
 const eventsForDay = (date) => {
@@ -624,12 +768,7 @@ const tagColor = (category) =>
     personal: "bg-gradient-to-r from-green-600 to-green-400 text-white",
   }[category] || "bg-slate-100 text-slate-700");
 
-const categoryPillColor = (c) =>
-  ({
-    meeting: "bg-white shadow-sm",
-    deadline: "bg-white shadow-sm",
-    personal: "bg-white shadow-sm",
-  }[c] || "bg-white");
+const categoryPillColor = () => "bg-white shadow-sm";
 
 const categoryDotColor = (c) =>
   ({
@@ -656,6 +795,7 @@ const prevMonth = () => {
   }
   gridKey.value++;
 };
+
 const nextMonth = () => {
   currentMonth.value++;
   if (currentMonth.value > 11) {
@@ -664,19 +804,23 @@ const nextMonth = () => {
   }
   gridKey.value++;
 };
+
 const prevYear = () => {
   currentYear.value--;
   gridKey.value++;
 };
+
 const nextYear = () => {
   currentYear.value++;
   gridKey.value++;
 };
+
 const pickMonthFromModal = (i) => {
   currentMonth.value = i;
   showMonthYearModal.value = false;
   gridKey.value++;
 };
+
 const openMonthYearModal = () => {
   showMonthYearModal.value = true;
 };
@@ -694,107 +838,126 @@ const openDay = (day) => {
   selectedDateEvents.value = events.value.filter(
     (ev) => normalizeDate(ev.event_date) === match
   );
+
   isEditMode.value = selectedDateEvents.value.length === 0;
   newEvent.value = { id: null, title: "", desc: "", category: "" };
   showModal.value = true;
 };
 
+function cancelEdit() {
+  isEditMode.value = false;
+
+  newEvent.value = {
+    id: null,
+    title: "",
+    desc: "",
+    category: "",
+  };
+
+  closeModal(); // ini yang menutup modal
+}
+
 const closeModal = () => {
   showModal.value = false;
   isEditMode.value = false;
   selectedDateEvents.value = [];
+  newEvent.value = { id: null, title: "", desc: "", category: "" };
 };
 
 const selectCategory = (c) => {
   newEvent.value.category = c;
 };
+
 const startEdit = (ev) => {
+  if (!ev) return;
   newEvent.value = {
     id: ev.id,
     title: ev.title,
-    desc: ev.description,
+    desc: ev.description || "",
     category: ev.metadata?.category || "",
   };
   isEditMode.value = true;
-};
-const cancelEdit = () => {
-  if (selectedDateEvents.value.length > 0) {
-    isEditMode.value = false;
-    newEvent.value = { id: null, title: "", desc: "", category: "" };
-  } else closeModal();
+  showModal.value = true;
 };
 
-// -------------------------------
-// UPDATED SAVE FUNCTION (timestamptz FIX)
-// -------------------------------
+const openEventDetail = (event) => {
+  selectedEvent.value = event;
+  showDetailModal.value = true;
+};
+
+const closeEventDetail = () => {
+  showDetailModal.value = false;
+  selectedEvent.value = null;
+};
+
+// Save
 const saveEvent = async () => {
-  if (!newEvent.value.title || !newEvent.value.category)
-    return alert("Judul & kategori harus diisi");
+  if (!selectedDate.value) return;
+  if (!newEvent.value.title?.trim()) return;
 
-  const user = (await supabase.auth.getUser()).data.user;
-  if (!user) return alert("User not signed in");
+  try {
+    const userResp = await supabase.auth.getUser();
+    const user = userResp?.data?.user;
+    if (!user) return;
 
-  // FULL UTC TIMESTAMP FOR timestamptz
-  const timestamp = new Date(selectedDate.value).toISOString();
+    const payload = {
+      title: newEvent.value.title,
+      description: newEvent.value.desc || null,
+      event_date: normalizeDate(selectedDate.value),
+      user_id: user.id,
+      metadata: { category: newEvent.value.category || null },
+    };
 
-  const payload = {
-    user_id: user.id,
-    title: newEvent.value.title,
-    description: newEvent.value.desc,
-    event_date: timestamp,
-    metadata: { category: newEvent.value.category },
-  };
+    if (newEvent.value.id) {
+      const { error } = await supabase
+        .from("events")
+        .update(payload)
+        .eq("id", newEvent.value.id);
+      if (error) console.error(error);
+    } else {
+      const { error } = await supabase.from("events").insert([payload]);
+      if (error) console.error(error);
+    }
 
-  if (newEvent.value.id) {
-    await supabase
-      .from("events")
-      .update({
-        title: newEvent.value.title,
-        description: newEvent.value.desc,
-        metadata: { category: newEvent.value.category },
-      })
-      .eq("id", newEvent.value.id);
-  } else {
-    await supabase.from("events").insert(payload);
+    await fetchEvents();
+
+    if (selectedDate.value) {
+      const match = normalizeDate(selectedDate.value);
+      selectedDateEvents.value = events.value.filter(
+        (ev) => normalizeDate(ev.event_date) === match
+      );
+    }
+
+    isEditMode.value = false;
+    showModal.value = false;
+    newEvent.value = { id: null, title: "", desc: "", category: "" };
+  } catch (err) {
+    console.error("saveEvent exception:", err);
   }
-
-  await fetchEvents();
-  closeModal();
 };
 
 const deleteEvent = async (id) => {
-  if (!confirm("Hapus event ini?")) return;
+  if (!id) return;
 
-  await supabase.from("events").delete().eq("id", id);
+  try {
+    const { error } = await supabase.from("events").delete().eq("id", id);
+    if (error) {
+      console.error("delete error:", error);
+      return;
+    }
 
-  // ✅ refresh sumber utama
-  await fetchEvents();
-
-  // ✅ sync ulang event di tanggal yang sedang dibuka
-  if (selectedDate.value) {
-    const match = normalizeDate(selectedDate.value);
-    selectedDateEvents.value = events.value.filter(
-      (ev) => normalizeDate(ev.event_date) === match
+    events.value = events.value.filter((e) => e.id !== id);
+    selectedDateEvents.value = selectedDateEvents.value.filter(
+      (e) => e.id !== id
     );
 
-    // ✅ kalau sudah kosong → kembali ke add mode
-    if (selectedDateEvents.value.length === 0) {
-      isEditMode.value = true;
-      newEvent.value = { id: null, title: "", desc: "", category: "" };
+    if (selectedEvent.value && selectedEvent.value.id === id) {
+      closeEventDetail();
     }
+  } catch (err) {
+    console.error("deleteEvent exception:", err);
   }
 };
-
-// ----------------------------------------------------
-// FIX PART (ditambahkan saja supaya error hilang)
-// ----------------------------------------------------
-const getData = async () => {};
-const emit = () => {};
-
-onMounted(async () => {
-  await getData();
-  emit("loaded");
-});
 </script>
 
 <style scoped>

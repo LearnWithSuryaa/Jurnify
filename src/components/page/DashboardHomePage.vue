@@ -437,7 +437,12 @@
                 Dibuat {{ formatDate(task.created_at) }}
               </div>
             </div>
-            <RouterLink to="/dashboard/journey">
+            <RouterLink
+              :to="{
+                path: '/dashboard/journey',
+                query: { task: task.id },
+              }"
+            >
               <button
                 class="opacity-0 cursor-pointer group-hover:opacity-100 transition p-2 hover:bg-white rounded-lg shrink-0"
               >
@@ -464,6 +469,7 @@
             v-for="ev in upcomingEvents"
             :key="ev.id"
             class="flex items-center gap-4 p-4 bg-linear-to-r from-blue-50 to-transparent rounded-2xl hover:shadow-md transition-shadow group cursor-pointer"
+            @click="$router.push({ name: 'DashboardEvents', query: { open: ev.id } })"
           >
             <div
               class="w-10 h-10 bg-linear-to-br from-[#3B6A9E] to-[#5a8bc4] rounded-xl flex items-center justify-center shrink-0"
@@ -473,26 +479,30 @@
                 class="w-5 h-5 text-white"
               />
             </div>
+
             <div class="flex-1 min-w-0">
               <div class="text-sm font-semibold text-slate-900 truncate">
                 {{ ev.title }}
               </div>
+
               <div class="flex items-center gap-2 text-xs text-slate-600">
-                <span class="capitalize">{{
-                  ev.metadata?.category || "event"
-                }}</span>
+                <span class="capitalize">
+                  {{ ev.metadata?.category || "event" }}
+                </span>
                 <span>•</span>
                 <span>{{ formatDate(ev.event_date) }}</span>
-                <span v-if="ev.start_time"
-                  >• {{ formatTime(ev.start_time) }}</span
-                >
+                <span v-if="ev.start_time">
+                  • {{ formatTime(ev.start_time) }}
+                </span>
               </div>
             </div>
+
             <ArrowRight
               class="w-5 h-5 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity"
             />
           </div>
         </div>
+
         <div v-else class="text-center py-12 text-slate-400">
           <Calendar class="w-12 h-12 mx-auto mb-3" />
           <div class="text-sm font-medium">Tidak ada event mendatang</div>

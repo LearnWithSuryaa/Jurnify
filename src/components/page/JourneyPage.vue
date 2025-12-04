@@ -506,6 +506,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router"; // ✅ ADDED
 import {
   Plus,
   Clock,
@@ -525,6 +526,10 @@ import {
 } from "lucide-vue-next";
 
 import { supabase } from "../../lib/supabase.js";
+
+// ✅ ADDED (router & route)
+const route = useRoute();
+const router = useRouter();
 
 // STATE
 const tasks = ref([]);
@@ -585,6 +590,7 @@ const statusOptions = [
 const fetchTasks = async () => {
   const user = (await supabase.auth.getUser()).data.user;
   if (!user) return;
+
   const { data, error } = await supabase
     .from("tasks")
     .select("*")
@@ -600,7 +606,23 @@ const fetchTasks = async () => {
   tasks.value = data || [];
 };
 
-onMounted(fetchTasks);
+// ✅ ADDED — buka modal dari URL query (?task=ID)
+const openTaskFromRoute = () => {
+  const taskId = route.query.task;
+  if (!taskId || !tasks.value.length) return;
+
+  const task = tasks.value.find((t) => String(t.id) === String(taskId));
+
+  if (task) {
+    openDetailModal(task);
+  }
+};
+
+// ✅ UPDATED onMounted (tanpa mengubah fetchTasks)
+onMounted(async () => {
+  await fetchTasks();
+  openTaskFromRoute(); // ✅ ADDED
+});
 
 // COMPUTED
 const tasksByStatus = computed(() => ({
@@ -712,9 +734,15 @@ const openDetailModal = (task) => {
   showDetailModal.value = true;
 };
 
+// ✅ UPDATED — bersihkan query saat modal ditutup
 const closeDetailModal = () => {
   showDetailModal.value = false;
   selectedTask.value = null;
+
+  router.replace({
+    path: "/dashboard/journey",
+    query: {},
+  });
 };
 
 const editFromDetail = () => {
@@ -745,7 +773,6 @@ const saveTask = async () => {
 
   try {
     if (formData.value.id) {
-      // Update existing task
       const { error } = await supabase
         .from("tasks")
         .update({
@@ -758,24 +785,21 @@ const saveTask = async () => {
 
       if (error) {
         console.error("Update error:", error);
-        alert(`Error updating task: ${error.message}`);
+        alert(error.message);
         return;
       }
     } else {
-      // Insert new task
-      const payload = {
+      const { error } = await supabase.from("tasks").insert({
         user_id: user.id,
         title: formData.value.title.trim(),
         description: formData.value.description?.trim() || null,
         status: formData.value.status,
         due_date: formData.value.due_date,
-      };
-
-      const { error } = await supabase.from("tasks").insert(payload);
+      });
 
       if (error) {
         console.error("Insert error:", error);
-        alert(`Error creating task: ${error.message}`);
+        alert(error.message);
         return;
       }
     }
@@ -783,29 +807,23 @@ const saveTask = async () => {
     await fetchTasks();
     closeFormModal();
   } catch (error) {
-    console.error("Save task error:", error);
-    alert(`Error: ${error.message}`);
+    console.error(error);
+    alert(error.message);
   }
 };
 
 const deleteTask = async (id) => {
   if (!confirm("Hapus task ini?")) return;
 
-  try {
-    const { error } = await supabase.from("tasks").delete().eq("id", id);
-
-    if (error) {
-      console.error("Delete error:", error);
-      alert(`Error: ${error.message}`);
-      return;
-    }
-
-    await fetchTasks();
-    closeDetailModal();
-  } catch (error) {
-    console.error("Delete task error:", error);
-    alert(`Error: ${error.message}`);
+  const { error } = await supabase.from("tasks").delete().eq("id", id);
+  if (error) {
+    console.error(error);
+    alert(error.message);
+    return;
   }
+
+  await fetchTasks();
+  closeDetailModal();
 };
 </script>
 

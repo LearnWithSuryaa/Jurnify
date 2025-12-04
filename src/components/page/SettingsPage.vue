@@ -4,375 +4,354 @@
   >
     <!-- HEADER -->
     <div class="mb-8">
-      <div class="flex items-center justify-between mb-2">
-        <div>
-          <h1 class="text-4xl md:text-5xl font-extrabold text-black mb-2">
-            Settings
-          </h1>
-          <p class="text-black/60 text-lg">Kelola preferensi dan akun Anda</p>
-        </div>
-      </div>
+      <h1 class="text-4xl md:text-5xl font-extrabold text-black mb-2">
+        Settings
+      </h1>
+      <p class="text-black/60 text-lg">Kelola preferensi dan akun Anda</p>
     </div>
 
-    <!-- SETTINGS GRID -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- LEFT COLUMN -->
-      <div class="lg:col-span-1 space-y-6">
-        <!-- Profile -->
-        <div
-          class="bg-white/80 backdrop-blur-md rounded-2xl shadow-md p-6 border-2 border-transparent hover:border-[#8FABD4]/40 transition-all"
-        >
-          <div class="text-center">
+      <!-- LEFT -->
+      <div class="space-y-6">
+        <!-- PROFILE -->
+        <div class="bg-white/80 rounded-2xl p-6 shadow-md text-center">
+          <div class="relative w-24 h-24 mx-auto mb-4 group">
+            <img
+              v-if="profileForm.avatar_url"
+              :src="profileForm.avatar_url"
+              class="w-24 h-24 rounded-full object-cover border"
+            />
             <div
-              class="w-24 h-24 bg-linear-to-br from-[#4A70A9] to-[#8FABD4] rounded-full flex items-center justify-center mx-auto mb-4"
+              v-else
+              class="w-24 h-24 bg-linear-to-br from-[#4A70A9] to-[#8FABD4] rounded-full flex items-center justify-center"
             >
               <User class="w-12 h-12 text-white" />
             </div>
 
-            <h3 class="text-xl font-bold text-black mb-1">
-              {{ userEmail || "User" }}
-            </h3>
-            <p class="text-sm text-black/60 mb-4">Journey User</p>
-
-            <button
-              @click="showEditProfileModal = true"
-              class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#4A70A9] hover:bg-[#3f6194] text-white rounded-xl transition font-semibold"
+            <!-- Overlay -->
+            <label
+              class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center text-white text-sm opacity-0 group-hover:opacity-100 cursor-pointer transition"
             >
-              <Edit3 class="w-4 h-4" />
-              Edit Profile
-            </button>
+              Ganti
+              <input
+                type="file"
+                class="hidden"
+                accept="image/*"
+                @change="handleAvatarUpload"
+              />
+            </label>
           </div>
-        </div>
 
-        <!-- Quick Stats -->
-        <div
-          class="bg-white/80 backdrop-blur-md rounded-2xl shadow-md p-6 border-2 border-transparent hover:border-[#8FABD4]/40 transition-all"
-        >
-          <h3 class="text-lg font-bold text-black mb-4 flex items-center gap-2">
-            <BarChart3 class="w-5 h-5 text-[#4A70A9]" />
-            Statistik Akun
+          <h3 class="text-xl font-bold">
+            {{ profileForm.full_name || userEmail }}
           </h3>
 
-          <div class="space-y-3">
-            <div class="flex justify-between">
-              <span class="text-sm text-black/60">Total Tasks</span>
-              <span class="text-lg font-bold text-black">
-                {{ totalTasks }}
-              </span>
-            </div>
+          <p class="text-sm text-black/60 italic mb-1" v-if="profileForm.bio">
+            {{ profileForm.bio }}
+          </p>
 
-            <div class="flex justify-between">
-              <span class="text-sm text-black/60">Total Events</span>
-              <span class="text-lg font-bold text-black">
-                {{ totalEvents }}
-              </span>
-            </div>
+          <p class="text-sm text-black/60 mb-4" v-else>Belum ada bio</p>
 
-            <div class="flex justify-between">
-              <span class="text-sm text-black/60">Completed</span>
-              <span class="text-lg font-bold text-[#4A70A9]">
-                {{ completedTasks }}
-              </span>
-            </div>
+          <button
+            @click="showEditProfileModal = true"
+            class="w-full py-2.5 bg-[#4A70A9] text-white rounded-xl font-semibold"
+          >
+            Edit Profile
+          </button>
+        </div>
+
+        <!-- STATS -->
+        <div class="bg-white/80 rounded-2xl p-6 shadow-md">
+          <h3 class="font-bold mb-4">Statistik Akun</h3>
+
+          <div class="flex justify-between">
+            <span>Total Tasks</span>
+            <strong>{{ totalTasks }}</strong>
+          </div>
+          <div class="flex justify-between">
+            <span>Total Events</span>
+            <strong>{{ totalEvents }}</strong>
+          </div>
+          <div class="flex justify-between">
+            <span>Completed</span>
+            <strong class="text-[#4A70A9]">{{ completedTasks }}</strong>
           </div>
         </div>
       </div>
 
-      <!-- RIGHT COLUMN -->
+      <!-- RIGHT -->
       <div class="lg:col-span-2 space-y-6">
-        <!-- Account Settings -->
-        <div
-          class="bg-white/80 backdrop-blur-md rounded-2xl shadow-md p-6 border-2 border-transparent hover:border-[#8FABD4]/40 transition-all"
-        >
-          <div class="flex items-center gap-3 mb-5">
-            <div
-              class="w-10 h-10 bg-linear-to-br from-[#4A70A9] to-[#8FABD4] rounded-xl flex items-center justify-center"
-            >
-              <UserCog class="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h2 class="text-xl font-bold text-black">Akun</h2>
-              <p class="text-xs text-black/60">Kelola informasi akun Anda</p>
-            </div>
+        <div class="bg-white/80 rounded-2xl p-6 shadow-md space-y-3">
+          <div
+            class="border rounded-xl p-4 cursor-pointer"
+            @click="showChangePasswordModal = true"
+          >
+            <strong>Ganti Password</strong>
+            <p class="text-sm text-black/60">Ubah password akun</p>
           </div>
 
-          <div class="space-y-3">
-            <div
-              class="p-4 rounded-xl border-2 border-black/10 hover:border-[#4A70A9]/40 transition-all group cursor-pointer"
-              @click="showChangePasswordModal = true"
-            >
-              <div class="flex justify-between items-center">
-                <div class="flex gap-3 items-center">
-                  <div
-                    class="w-10 h-10 bg-[#8FABD4]/20 rounded-lg flex items-center justify-center"
-                  >
-                    <Lock class="w-5 h-5 text-[#4A70A9]" />
-                  </div>
-                  <div>
-                    <h4 class="font-semibold text-black">Ganti Password</h4>
-                    <p class="text-xs text-black/60">Ubah password akun Anda</p>
-                  </div>
-                </div>
-                <ChevronRight class="w-5 h-5 text-[#4A70A9]" />
-              </div>
-            </div>
-
-            <div
-              class="p-4 rounded-xl border-2 border-black/10 hover:border-[#4A70A9]/40 transition-all group cursor-pointer"
-              @click="showEditProfileModal = true"
-            >
-              <div class="flex justify-between items-center">
-                <div class="flex gap-3 items-center">
-                  <div
-                    class="w-10 h-10 bg-[#8FABD4]/20 rounded-lg flex items-center justify-center"
-                  >
-                    <Mail class="w-5 h-5 text-[#4A70A9]" />
-                  </div>
-                  <div>
-                    <h4 class="font-semibold text-black">Email</h4>
-                    <p class="text-xs text-black/60">
-                      {{ userEmail || "Belum ada email" }}
-                    </p>
-                  </div>
-                </div>
-                <ChevronRight class="w-5 h-5 text-[#4A70A9]" />
-              </div>
-            </div>
+          <div
+            class="border rounded-xl p-4 cursor-pointer"
+            @click="showEditProfileModal = true"
+          >
+            <strong>Email</strong>
+            <p class="text-sm text-black/60">{{ userEmail }}</p>
           </div>
         </div>
 
-        <!-- Logout Button -->
+        <!-- LOGOUT -->
         <div
-          class="bg-linear-to-br from-[#4A70A9] to-[#8FABD4] rounded-2xl shadow-lg p-6 text-white"
+          class="bg-linear-to-br from-[#4A70A9] to-[#8FABD4] rounded-2xl p-6 text-white flex justify-between"
         >
-          <div class="flex items-center justify-between">
-            <div class="flex gap-3 items-center">
-              <div
-                class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center"
-              >
-                <LogOut class="w-6 h-6" />
-              </div>
-              <div>
-                <h3 class="text-lg font-bold">Keluar dari Akun</h3>
-                <p class="text-sm text-white/80">
-                  Logout dari aplikasi Journey
-                </p>
-              </div>
-            </div>
-            <button
-              @click="handleLogout"
-              class="px-6 py-3 bg-white/20 hover:bg-white/30 rounded-xl transition-all font-semibold flex items-center gap-2"
-            >
-              <LogOut class="w-5 h-5" />
-              Logout
-            </button>
+          <div>
+            <h3 class="font-bold">Keluar dari Akun</h3>
+            <p class="text-sm opacity-80">Logout dari aplikasi</p>
           </div>
+
+          <button
+            @click="handleLogout"
+            class="px-6 py-3 bg-white/20 rounded-xl font-semibold"
+          >
+            Logout
+          </button>
         </div>
       </div>
     </div>
   </section>
+
+  <!-- EDIT PROFILE MODAL -->
+  <Transition name="modal-fade">
+    <div
+      v-if="showEditProfileModal"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/30"
+    >
+      <div class="bg-white rounded-2xl p-6 w-full max-w-md">
+        <div class="flex justify-between mb-4">
+          <h3 class="font-bold text-lg">Edit Profile</h3>
+          <button @click="showEditProfileModal = false"><X /></button>
+        </div>
+
+        <form @submit.prevent="saveProfile" class="space-y-4">
+          <input
+            v-model="profileForm.full_name"
+            placeholder="Nama Lengkap"
+            class="w-full border px-4 py-2 rounded-xl"
+          />
+
+          <textarea
+            v-model="profileForm.bio"
+            rows="3"
+            placeholder="Bio"
+            class="w-full border px-4 py-2 rounded-xl"
+          />
+
+          <input
+            v-model="profileForm.email"
+            type="email"
+            required
+            placeholder="Email"
+            class="w-full border px-4 py-2 rounded-xl"
+          />
+
+          <button
+            class="w-full py-2.5 bg-[#4A70A9] text-white rounded-xl font-semibold"
+          >
+            Simpan Perubahan
+          </button>
+        </form>
+      </div>
+    </div>
+  </Transition>
+
+  <!-- CHANGE PASSWORD MODAL -->
+  <Transition name="modal-fade">
+    <div
+      v-if="showChangePasswordModal"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/30"
+    >
+      <div class="bg-white rounded-2xl p-6 w-full max-w-md">
+        <div class="flex justify-between mb-4">
+          <h3 class="font-bold text-lg">Ganti Password</h3>
+          <button @click="showChangePasswordModal = false"><X /></button>
+        </div>
+
+        <form @submit.prevent="changePassword" class="space-y-4">
+          <input
+            v-model="passwordForm.newPassword"
+            type="password"
+            placeholder="Password baru"
+            class="w-full border px-4 py-2 rounded-xl"
+            required
+          />
+
+          <input
+            v-model="passwordForm.confirmPassword"
+            type="password"
+            placeholder="Konfirmasi password"
+            class="w-full border px-4 py-2 rounded-xl"
+            required
+          />
+
+          <button
+            class="w-full py-2.5 bg-[#4A70A9] text-white rounded-xl font-semibold"
+          >
+            Ubah Password
+          </button>
+        </form>
+      </div>
+    </div>
+  </Transition>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import {
-  User,
-  Edit3,
-  Settings,
-  Bell,
-  Moon,
-  Shield,
-  Download,
-  Trash2,
-  LogOut,
-  ChevronRight,
-  X,
-  Lock,
-  Mail,
-  UserCog,
-  BarChart3,
-} from "lucide-vue-next";
-import { supabase } from "../../lib/supabase.js";
+import { User, X } from "lucide-vue-next";
+import { supabase } from "../../lib/supabase";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
 
-// STATE
 const userEmail = ref("");
-const notifications = ref(true);
-const darkMode = ref(false);
 const showEditProfileModal = ref(false);
 const showChangePasswordModal = ref(false);
 
-const profileForm = ref({ email: "" });
+const profileForm = ref({
+  email: "",
+  full_name: "",
+  bio: "",
+  avatar_url: "",
+});
 
 const passwordForm = ref({
-  oldPassword: "",
   newPassword: "",
   confirmPassword: "",
 });
 
-// 📌 TASKS & EVENTS (seperti di Dashboard)
 const tasks = ref([]);
 const events = ref([]);
 
-// FETCH TASKS ala Dashboard
-const fetchTasks = async () => {
-  const user = (await supabase.auth.getUser()).data.user;
-  if (!user) return;
-  const { data } = await supabase
-    .from("tasks")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false });
-
-  tasks.value = data || [];
-};
-
-// FETCH EVENTS ala Dashboard
-const fetchEvents = async () => {
-  const user = (await supabase.auth.getUser()).data.user;
-  if (!user) return;
-  const { data } = await supabase
-    .from("events")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("event_date", { ascending: true });
-
-  events.value = data || [];
-};
-
-// 📌 COMPUTED JUMLAH TASK & EVENT
 const totalTasks = computed(() => tasks.value.length);
 const totalEvents = computed(() => events.value.length);
 const completedTasks = computed(
   () => tasks.value.filter((t) => t.status === "completed").length
 );
 
-// FETCH USER DATA
-const fetchUserData = async () => {
+onMounted(async () => {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (user) {
-    userEmail.value = user.email;
-    profileForm.value.email = user.email;
-  }
-};
+  if (!user) return;
 
-// ON MOUNT (ambil data seperti dashboard)
-onMounted(() => {
-  fetchUserData();
-  fetchTasks();
-  fetchEvents();
+  userEmail.value = user.email;
+  profileForm.value.email = user.email;
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+
+  if (profile) {
+    profileForm.value.full_name = profile.full_name;
+    profileForm.value.bio = profile.bio;
+    profileForm.value.avatar_url = profile.avatar_url;
+  }
+
+  const { data: t } = await supabase.from("tasks").select("*");
+  const { data: e } = await supabase.from("events").select("*");
+
+  tasks.value = t || [];
+  events.value = e || [];
 });
 
-// FUNCTIONS
-const toggleNotifications = () => {
-  notifications.value = !notifications.value;
-};
-
-const toggleDarkMode = () => {
-  darkMode.value = !darkMode.value;
-};
-
 const saveProfile = async () => {
-  if (!profileForm.value.email) {
-    alert("Email tidak boleh kosong!");
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  if (profileForm.value.email !== user.email) {
+    await supabase.auth.updateUser({ email: profileForm.value.email });
+  }
+
+  await supabase.from("profiles").upsert({
+    id: user.id,
+    full_name: profileForm.value.full_name,
+    bio: profileForm.value.bio,
+    updated_at: new Date(),
+  });
+
+  userEmail.value = profileForm.value.email;
+  showEditProfileModal.value = false;
+  alert("Profile berhasil diperbarui");
+};
+
+const handleAvatarUpload = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const fileExt = file.name.split(".").pop();
+  const filePath = `${user.id}/avatar.${fileExt}`;
+
+  // upload
+  const { error: uploadError } = await supabase.storage
+    .from("avatars")
+    .upload(filePath, file, {
+      cacheControl: "3600",
+      upsert: true,
+      contentType: file.type,
+    });
+
+  if (uploadError) {
+    console.error(uploadError);
+    alert("Upload avatar gagal");
     return;
   }
 
-  try {
-    const { error } = await supabase.auth.updateUser({
-      email: profileForm.value.email,
-    });
+  // ambil public url
+  const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
 
-    if (error) throw error;
+  const avatarUrl = data.publicUrl;
 
-    alert("Profile berhasil diupdate!");
-    showEditProfileModal.value = false;
-    await fetchUserData();
-  } catch (error) {
-    alert("Gagal update profile: " + error.message);
-  }
+  // simpan ke profiles
+  await supabase
+    .from("profiles")
+    .update({ avatar_url: avatarUrl })
+    .eq("id", user.id);
+
+  profileForm.value.avatar_url = avatarUrl;
 };
 
 const changePassword = async () => {
-  if (!passwordForm.value.newPassword || !passwordForm.value.confirmPassword) {
-    alert("Semua field harus diisi!");
-    return;
-  }
-
   if (passwordForm.value.newPassword !== passwordForm.value.confirmPassword) {
-    alert("Password baru dan konfirmasi tidak cocok!");
+    alert("Password tidak cocok");
     return;
   }
 
   if (passwordForm.value.newPassword.length < 6) {
-    alert("Password minimal 6 karakter!");
+    alert("Password minimal 6 karakter");
     return;
   }
 
-  try {
-    const { error } = await supabase.auth.updateUser({
-      password: passwordForm.value.newPassword,
-    });
+  await supabase.auth.updateUser({
+    password: passwordForm.value.newPassword,
+  });
 
-    if (error) throw error;
+  passwordForm.value.newPassword = "";
+  passwordForm.value.confirmPassword = "";
+  showChangePasswordModal.value = false;
 
-    alert("Password berhasil diubah!");
-    showChangePasswordModal.value = false;
-    passwordForm.value = {
-      oldPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    };
-  } catch (error) {
-    alert("Gagal ubah password: " + error.message);
-  }
-};
-
-const exportData = () => {
-  alert("Fitur export data akan segera hadir!");
-};
-
-const confirmDeleteAccount = () => {
-  if (
-    confirm(
-      "Apakah Anda yakin ingin menghapus akun? Semua data akan hilang permanen!"
-    )
-  ) {
-    deleteAccount();
-  }
-};
-
-const deleteAccount = async () => {
-  try {
-    const { error } = await supabase.auth.admin.deleteUser(
-      (
-        await supabase.auth.getUser()
-      ).data.user.id
-    );
-
-    if (error) throw error;
-
-    alert("Akun berhasil dihapus");
-    router.push("/login");
-  } catch (error) {
-    alert("Gagal menghapus akun: " + error.message);
-  }
+  alert("Password berhasil diubah");
 };
 
 const handleLogout = async () => {
-  if (confirm("Apakah Anda yakin ingin logout?")) {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      router.push("/login");
-    } catch (error) {
-      alert("Gagal logout: " + error.message);
-    }
-  }
+  await supabase.auth.signOut();
+  router.push("/login");
 };
 </script>
 
