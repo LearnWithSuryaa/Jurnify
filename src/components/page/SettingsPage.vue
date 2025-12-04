@@ -295,15 +295,24 @@ const handleAvatarUpload = async (event) => {
   } = await supabase.auth.getUser();
   if (!user) return;
 
+  // generate nama file acak (best practice untuk production)
   const fileExt = file.name.split(".").pop();
-  const filePath = `${user.id}/avatar.${fileExt}`;
+  const fileName = `${crypto.randomUUID()}.${fileExt}`;
+  const filePath = `${user.id}/${fileName}`;
 
-  // upload
+  // ambil profile lama untuk menghapus avatar lama
+  const { data: currentProfile } = await supabase
+    .from("profiles")
+    .select("avatar_url")
+    .eq("id", user.id)
+    .single();
+
+  // upload file baru
   const { error: uploadError } = await supabase.storage
     .from("avatars")
     .upload(filePath, file, {
       cacheControl: "3600",
-      upsert: true,
+      upsert: false, // jangan overwrite
       contentType: file.type,
     });
 
@@ -315,16 +324,31 @@ const handleAvatarUpload = async (event) => {
 
   // ambil public url
   const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
+  const newUrl = `${data.publicUrl}?t=${Date.now()}`; // cache-busting
 
-  const avatarUrl = data.publicUrl;
-
-  // simpan ke profiles
+  // simpan ke database
   await supabase
     .from("profiles")
-    .update({ avatar_url: avatarUrl })
+    .update({ avatar_url: newUrl })
     .eq("id", user.id);
 
-  profileForm.value.avatar_url = avatarUrl;
+  // hapus avatar lama jika ada
+  if (currentProfile && currentProfile.avatar_url) {
+    try {
+      const oldPath = currentProfile.avatar_url
+        .split("/avatars/")
+        .pop()
+        .split("?")[0];
+
+      if (oldPath && oldPath !== filePath) {
+        await supabase.storage.from("avatars").remove([oldPath]);
+      }
+    } catch (err) {
+      console.warn("Gagal menghapus avatar lama:", err);
+    }
+  }
+
+  profileForm.value.avatar_url = newUrl;
 };
 
 const changePassword = async () => {
