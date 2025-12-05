@@ -469,7 +469,9 @@
             v-for="ev in upcomingEvents"
             :key="ev.id"
             class="flex items-center gap-4 p-4 bg-linear-to-r from-blue-50 to-transparent rounded-2xl hover:shadow-md transition-shadow group cursor-pointer"
-            @click="$router.push({ name: 'DashboardEvents', query: { open: ev.id } })"
+            @click="
+              $router.push({ name: 'DashboardEvents', query: { open: ev.id } })
+            "
           >
             <div
               class="w-10 h-10 bg-linear-to-br from-[#3B6A9E] to-[#5a8bc4] rounded-xl flex items-center justify-center shrink-0"
@@ -528,7 +530,6 @@ import {
   ChevronRight,
   UserRound,
   Pin,
-  Plus,
   ArrowRight,
   Award,
   BarChart3,
@@ -543,20 +544,53 @@ const selectedDate = ref(new Date());
 const weekDays = ["S", "M", "T", "W", "T", "F", "S"];
 let timeInterval = null;
 
-/* ================= TIMEZONE SAFE HELPERS ================= */
-const sameLocalDay = (a, b) => {
-  const da = new Date(a);
-  const db = new Date(b);
-  return (
-    da.getFullYear() === db.getFullYear() &&
-    da.getMonth() === db.getMonth() &&
-    da.getDate() === db.getDate()
+/* ============================================================
+   TIMEZONE-SAFE DATE CORE (WAJIB – JANGAN UBAH)
+============================================================ */
+
+/**
+ * Konversi input ke Date LOCAL (aman untuk YYYY-MM-DD Supabase)
+ */
+const toLocalDate = (value) => {
+  if (!value) return null;
+
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    const [y, m, d] = value.split("-").map(Number);
+    return new Date(y, m - 1, d);
+  }
+
+  const d = new Date(value);
+  return new Date(
+    d.getFullYear(),
+    d.getMonth(),
+    d.getDate(),
+    d.getHours(),
+    d.getMinutes(),
+    d.getSeconds()
   );
 };
 
-const startOfToday = () => {
-  const d = new Date();
+/**
+ * Key integer unik per hari (timezone-safe)
+ * contoh: 20251204
+ */
+const dayKey = (value) => {
+  const d = toLocalDate(value);
+  if (!d) return null;
+  return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+};
+
+const todayKey = () => dayKey(new Date());
+
+const startOfLocalDay = (value = new Date()) => {
+  const d = toLocalDate(value);
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+};
+
+const diffDaysLocal = (a, b) => {
+  const da = startOfLocalDay(a).getTime();
+  const db = startOfLocalDay(b).getTime();
+  return Math.round((da - db) / 86400000);
 };
 
 /* ================= FETCH DATA ================= */
@@ -618,6 +652,7 @@ const monthName = computed(() =>
   })
 );
 
+/* ================= CALENDAR ================= */
 const calendarDays = computed(() => {
   const year = selectedDate.value.getFullYear();
   const month = selectedDate.value.getMonth();
@@ -632,37 +667,35 @@ const calendarDays = computed(() => {
       isCurrentMonth: false,
     });
   }
+
   for (let d = 1; d <= lastDate; d++) {
     days.push({
       date: new Date(year, month, d),
       isCurrentMonth: true,
     });
   }
+
   return days;
 });
 
-/* ================= EVENTS (FINAL & SESUAI SPESIFIKASI) ================= */
+/* ================= EVENTS (FIXED & SAFE) ================= */
 
-// ✅ EVENT HARI INI (HANYA HARI INI)
+// ✅ EVENT HARI INI
 const todayEvents = computed(() => {
-  const today = new Date();
-  return events.value.filter((ev) => sameLocalDay(ev.event_date, today));
+  const today = todayKey();
+  return events.value.filter((ev) => dayKey(ev.event_date) === today);
 });
 
-// ✅ EVENT MENDATANG (BESOK = H+1)
+// ✅ EVENT MENDATANG (H+1 s/d H+7)
 const upcomingEvents = computed(() => {
-  const start = startOfToday();
-  start.setDate(start.getDate() + 1); // BESOK (H+1)
-
-  const end = new Date(start);
-  end.setDate(start.getDate() + 7);
+  const today = todayKey();
 
   return events.value
     .filter((ev) => {
-      const d = new Date(ev.event_date);
-      return d >= start && d <= end;
+      const d = dayKey(ev.event_date);
+      return d > today && d <= today + 7;
     })
-    .sort((a, b) => new Date(a.event_date) - new Date(b.event_date))
+    .sort((a, b) => dayKey(a.event_date) - dayKey(b.event_date))
     .slice(0, 5);
 });
 
@@ -682,13 +715,12 @@ const completionRate = computed(() =>
     : 0
 );
 
+// ✅ TASK URGENT (±5 hari)
 const urgentTasks = computed(() =>
   tasks.value.filter((t) => {
     if (["completed", "cancelled"].includes(t.status)) return false;
-    const due = new Date(t.due_date);
-    const today = startOfToday();
-    const diffDays = Math.ceil((due - today) / 86400000);
-    return diffDays >= -5 && diffDays <= 5;
+    const diff = diffDaysLocal(t.due_date, new Date());
+    return diff >= -5 && diff <= 5;
   })
 );
 
@@ -700,11 +732,12 @@ const recentTasks = computed(() =>
 
 /* ================= CALENDAR HELPERS ================= */
 const eventsForDay = (date) =>
-  events.value.filter((ev) => sameLocalDay(ev.event_date, date));
+  events.value.filter((ev) => dayKey(ev.event_date) === dayKey(date));
 
-const hasEvents = (date) => eventsForDay(date).length > 0;
+const hasEvents = (date) =>
+  events.value.some((ev) => dayKey(ev.event_date) === dayKey(date));
 
-const isToday = (date) => sameLocalDay(date, new Date());
+const isToday = (date) => dayKey(date) === todayKey();
 
 /* ================= UI HELPERS ================= */
 const categoryIcon = (category) => {
@@ -717,7 +750,7 @@ const categoryIcon = (category) => {
 };
 
 const formatDate = (dateStr) =>
-  new Date(dateStr).toLocaleDateString("id-ID", {
+  toLocalDate(dateStr).toLocaleDateString("id-ID", {
     day: "numeric",
     month: "short",
   });
@@ -725,18 +758,16 @@ const formatDate = (dateStr) =>
 const formatTime = (timeStr) => timeStr?.slice(0, 5) || "";
 
 const getDaysUntil = (dateStr) => {
-  const due = new Date(dateStr);
-  const today = startOfToday();
-  const diffDays = Math.ceil((due - today) / 86400000);
+  const diff = diffDaysLocal(dateStr, new Date());
 
-  if (diffDays < 0) return `Terlambat ${Math.abs(diffDays)} hari`;
-  if (diffDays === 0) return "Hari ini";
-  if (diffDays === 1) return "Besok";
-  return `${diffDays} hari lagi`;
+  if (diff < 0) return `Terlambat ${Math.abs(diff)} hari`;
+  if (diff === 0) return "Hari ini";
+  if (diff === 1) return "Besok";
+  return `${diff} hari lagi`;
 };
 
 const getDaysUntilClass = (dateStr) => {
-  const d = Math.ceil((new Date(dateStr) - startOfToday()) / 86400000);
+  const d = diffDaysLocal(dateStr, new Date());
 
   if (d < 0) return "text-red-600 w-4 h-4";
   if (d === 0) return "text-orange-600 w-4 h-4";
@@ -745,7 +776,7 @@ const getDaysUntilClass = (dateStr) => {
 };
 
 const getDaysUntilTextClass = (dateStr) => {
-  const d = Math.ceil((new Date(dateStr) - startOfToday()) / 86400000);
+  const d = diffDaysLocal(dateStr, new Date());
 
   if (d < 0) return "text-red-600";
   if (d === 0) return "text-orange-600";

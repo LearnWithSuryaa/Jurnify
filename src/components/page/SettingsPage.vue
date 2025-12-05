@@ -38,12 +38,13 @@
                 class="hidden"
                 accept="image/*"
                 @change="handleAvatarUpload"
+                :disabled="avatarUploading"
               />
             </label>
           </div>
 
           <h3 class="text-xl font-bold">
-            {{ profileForm.full_name || userEmail }}
+            {{ profileForm.full_name || displayEmail }}
           </h3>
 
           <p class="text-sm text-black/60 italic mb-1" v-if="profileForm.bio">
@@ -53,10 +54,12 @@
           <p class="text-sm text-black/60 mb-4" v-else>Belum ada bio</p>
 
           <button
-            @click="showEditProfileModal = true"
+            @click="openEditProfile"
             class="w-full py-2.5 bg-[#4A70A9] text-white rounded-xl font-semibold"
+            :disabled="profileLoading"
           >
-            Edit Profile
+            <span v-if="profileLoading">Memuat...</span>
+            <span v-else>Edit Profile</span>
           </button>
         </div>
 
@@ -90,12 +93,28 @@
             <p class="text-sm text-black/60">Ubah password akun</p>
           </div>
 
-          <div
-            class="border rounded-xl p-4 cursor-pointer"
-            @click="showEditProfileModal = true"
-          >
-            <strong>Email</strong>
-            <p class="text-sm text-black/60">{{ userEmail }}</p>
+          <div class="border rounded-xl p-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <strong>Email</strong>
+                <p class="text-sm text-black/60">{{ displayEmail }}</p>
+              </div>
+
+              <div class="flex gap-2">
+                <button
+                  @click="showChangeEmailModal = true"
+                  class="px-3 py-2 bg-[#4A70A9] text-white rounded-xl text-sm"
+                >
+                  Ganti Email
+                </button>
+                <button
+                  @click="copyEmail"
+                  class="px-3 py-2 border rounded-xl text-sm"
+                >
+                  Salin
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -128,7 +147,7 @@
       <div class="bg-white rounded-2xl p-6 w-full max-w-md">
         <div class="flex justify-between mb-4">
           <h3 class="font-bold text-lg">Edit Profile</h3>
-          <button @click="showEditProfileModal = false"><X /></button>
+          <button @click="closeEditProfile"><X /></button>
         </div>
 
         <form @submit.prevent="saveProfile" class="space-y-4">
@@ -136,6 +155,7 @@
             v-model="profileForm.full_name"
             placeholder="Nama Lengkap"
             class="w-full border px-4 py-2 rounded-xl"
+            :disabled="profileLoading"
           />
 
           <textarea
@@ -143,21 +163,99 @@
             rows="3"
             placeholder="Bio"
             class="w-full border px-4 py-2 rounded-xl"
+            :disabled="profileLoading"
           />
 
+          <!-- Email shown but read-only to avoid accidental edits -->
           <input
-            v-model="profileForm.email"
+            :value="displayEmail"
             type="email"
-            required
-            placeholder="Email"
+            disabled
+            class="w-full border px-4 py-2 rounded-xl bg-gray-100 cursor-not-allowed"
+          />
+          <p class="text-xs text-gray-500">
+            Untuk mengubah email, gunakan tombol "Ganti Email".
+          </p>
+
+          <div class="flex gap-2">
+            <button
+              type="submit"
+              class="flex-1 w-full py-2.5 bg-[#4A70A9] text-white rounded-xl font-semibold"
+              :disabled="profileLoading"
+            >
+              <span v-if="profileLoading">Menyimpan...</span>
+              <span v-else>Simpan Perubahan</span>
+            </button>
+
+            <button
+              type="button"
+              @click="resetProfileForm"
+              class="px-4 py-2 border rounded-xl"
+              :disabled="profileLoading"
+            >
+              Batal
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </Transition>
+
+  <!-- CHANGE EMAIL MODAL -->
+  <Transition name="modal-fade">
+    <div
+      v-if="showChangeEmailModal"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/30"
+    >
+      <div class="bg-white rounded-2xl p-6 w-full max-w-md">
+        <div class="flex justify-between mb-4">
+          <h3 class="font-bold text-lg">Ganti Email</h3>
+          <button @click="showChangeEmailModal = false"><X /></button>
+        </div>
+
+        <form @submit.prevent="submitChangeEmail" class="space-y-4">
+          <input
+            v-model="emailForm.newEmail"
+            type="email"
+            placeholder="Email baru"
             class="w-full border px-4 py-2 rounded-xl"
+            required
+            :disabled="emailLoading"
           />
 
-          <button
-            class="w-full py-2.5 bg-[#4A70A9] text-white rounded-xl font-semibold"
-          >
-            Simpan Perubahan
-          </button>
+          <!-- optional: ask for current password if you require re-auth -->
+          <input
+            v-model="emailForm.currentPassword"
+            type="password"
+            placeholder="Masukkan password saat ini (opsional)"
+            class="w-full border px-4 py-2 rounded-xl"
+            :disabled="emailLoading"
+          />
+
+          <div class="flex gap-2">
+            <button
+              class="flex-1 w-full py-2.5 bg-[#4A70A9] text-white rounded-xl font-semibold"
+              :disabled="emailLoading"
+            >
+              <span v-if="emailLoading">Mengirim perubahan...</span>
+              <span v-else>Ganti Email</span>
+            </button>
+
+            <button
+              type="button"
+              @click="showChangeEmailModal = false"
+              class="px-4 py-2 border rounded-xl"
+              :disabled="emailLoading"
+            >
+              Batal
+            </button>
+          </div>
+
+          <p class="text-xs text-gray-500">
+            Setelah mengganti email, biasanya akan dikirimkan tautan verifikasi
+            ke email baru. Ikuti instruksi yang dikirimkan. Anda mungkin perlu
+            masuk ulang setelah verifikasi.
+          </p>
         </form>
       </div>
     </div>
@@ -182,6 +280,7 @@
             placeholder="Password baru"
             class="w-full border px-4 py-2 rounded-xl"
             required
+            :disabled="passwordLoading"
           />
 
           <input
@@ -190,13 +289,27 @@
             placeholder="Konfirmasi password"
             class="w-full border px-4 py-2 rounded-xl"
             required
+            :disabled="passwordLoading"
           />
 
-          <button
-            class="w-full py-2.5 bg-[#4A70A9] text-white rounded-xl font-semibold"
-          >
-            Ubah Password
-          </button>
+          <div class="flex gap-2">
+            <button
+              class="flex-1 w-full py-2.5 bg-[#4A70A9] text-white rounded-xl font-semibold"
+              :disabled="passwordLoading"
+            >
+              <span v-if="passwordLoading">Menyimpan...</span>
+              <span v-else>Ubah Password</span>
+            </button>
+
+            <button
+              type="button"
+              @click="cancelChangePassword"
+              class="px-4 py-2 border rounded-xl"
+              :disabled="passwordLoading"
+            >
+              Batal
+            </button>
+          </div>
         </form>
       </div>
     </div>
@@ -211,15 +324,28 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
+/* UI state */
 const userEmail = ref("");
+const displayEmail = computed(() => userEmail.value || "—");
 const showEditProfileModal = ref(false);
 const showChangePasswordModal = ref(false);
+const showChangeEmailModal = ref(false);
 
+const profileLoading = ref(false);
+const avatarUploading = ref(false);
+const emailLoading = ref(false);
+const passwordLoading = ref(false);
+
+/* Forms */
 const profileForm = ref({
-  email: "",
   full_name: "",
   bio: "",
   avatar_url: "",
+});
+
+const emailForm = ref({
+  newEmail: "",
+  currentPassword: "", // optional: used if you want to re-authenticate
 });
 
 const passwordForm = ref({
@@ -227,6 +353,7 @@ const passwordForm = ref({
   confirmPassword: "",
 });
 
+/* Data lists */
 const tasks = ref([]);
 const events = ref([]);
 
@@ -236,147 +363,329 @@ const completedTasks = computed(
   () => tasks.value.filter((t) => t.status === "completed").length
 );
 
+/* Helpers */
+function alertSuccess(message) {
+  // replace with your app's toast/notification
+  alert(message);
+}
+function alertError(message) {
+  // replace with your app's toast/notification
+  alert(message);
+}
+
+/* Fetch initial data */
 onMounted(async () => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return;
-
-  userEmail.value = user.email;
-  profileForm.value.email = user.email;
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
-
-  if (profile) {
-    profileForm.value.full_name = profile.full_name;
-    profileForm.value.bio = profile.bio;
-    profileForm.value.avatar_url = profile.avatar_url;
-  }
-
-  const { data: t } = await supabase.from("tasks").select("*");
-  const { data: e } = await supabase.from("events").select("*");
-
-  tasks.value = t || [];
-  events.value = e || [];
+  await loadUserAndProfile();
+  await loadStats();
 });
 
-const saveProfile = async () => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return;
+async function loadUserAndProfile() {
+  profileLoading.value = true;
+  try {
+    const {
+      data: { user },
+      error: userErr,
+    } = await supabase.auth.getUser();
+    if (userErr) throw userErr;
+    if (!user) {
+      // not authenticated
+      router.push("/login");
+      return;
+    }
+    userEmail.value = user.email || "";
 
-  if (profileForm.value.email !== user.email) {
-    await supabase.auth.updateUser({ email: profileForm.value.email });
+    // load profile row
+    const { data: profile, error: profileErr } = await supabase
+      .from("profiles")
+      .select("full_name, bio, avatar_url")
+      .eq("id", user.id)
+      .single();
+
+    if (profileErr && profileErr.code !== "PGRST116") {
+      // PGRST116 = no rows found; ignore if not present
+      throw profileErr;
+    }
+
+    if (profile) {
+      profileForm.value.full_name = profile.full_name || "";
+      profileForm.value.bio = profile.bio || "";
+      profileForm.value.avatar_url = profile.avatar_url || "";
+    }
+  } catch (err) {
+    console.error("loadUserAndProfile:", err);
+    alertError("Gagal memuat profil. Coba refresh.");
+  } finally {
+    profileLoading.value = false;
   }
+}
 
-  await supabase.from("profiles").upsert({
-    id: user.id,
-    full_name: profileForm.value.full_name,
-    bio: profileForm.value.bio,
-    updated_at: new Date(),
-  });
+async function loadStats() {
+  try {
+    const { data: t } = await supabase.from("tasks").select("*");
+    const { data: e } = await supabase.from("events").select("*");
+    tasks.value = t || [];
+    events.value = e || [];
+  } catch (err) {
+    console.warn("loadStats:", err);
+  }
+}
 
-  userEmail.value = profileForm.value.email;
+/* Edit Profile */
+function openEditProfile() {
+  showEditProfileModal.value = true;
+}
+function closeEditProfile() {
   showEditProfileModal.value = false;
-  alert("Profile berhasil diperbarui");
+  // reset to last saved
+  loadUserAndProfile();
+}
+function resetProfileForm() {
+  loadUserAndProfile();
+  showEditProfileModal.value = false;
+}
+
+const saveProfile = async () => {
+  profileLoading.value = true;
+  try {
+    const {
+      data: { user },
+      error: userErr,
+    } = await supabase.auth.getUser();
+    if (userErr) throw userErr;
+    if (!user) {
+      alertError("User tidak terautentikasi");
+      return;
+    }
+
+    // Validate (example: full_name length)
+    if (
+      profileForm.value.full_name &&
+      profileForm.value.full_name.length > 120
+    ) {
+      alertError("Nama terlalu panjang (max 120 karakter)");
+      return;
+    }
+
+    // Only touch profiles table here (no email updates)
+    const payload = {
+      id: user.id,
+      full_name: profileForm.value.full_name || null,
+      bio: profileForm.value.bio || null,
+      avatar_url: profileForm.value.avatar_url || null,
+      updated_at: new Date(),
+    };
+
+    const { error: upsertErr } = await supabase
+      .from("profiles")
+      .upsert(payload);
+    if (upsertErr) throw upsertErr;
+
+    alertSuccess("Profil berhasil diperbarui");
+    showEditProfileModal.value = false;
+    // refresh
+    await loadUserAndProfile();
+  } catch (err) {
+    console.error("saveProfile:", err);
+    alertError("Gagal menyimpan profil");
+  } finally {
+    profileLoading.value = false;
+  }
 };
 
+/* Avatar upload */
 const handleAvatarUpload = async (event) => {
-  const file = event.target.files[0];
+  const file = event.target.files?.[0];
   if (!file) return;
+  avatarUploading.value = true;
+  try {
+    const {
+      data: { user },
+      error: userErr,
+    } = await supabase.auth.getUser();
+    if (userErr) throw userErr;
+    if (!user) throw new Error("User tidak ditemukan");
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return;
+    // sanitize & generate filename
+    const fileExt = file.name.split(".").pop();
+    const fileName = `${crypto.randomUUID()}.${fileExt}`;
+    const filePath = `${user.id}/${fileName}`;
 
-  // generate nama file acak (best practice untuk production)
-  const fileExt = file.name.split(".").pop();
-  const fileName = `${crypto.randomUUID()}.${fileExt}`;
-  const filePath = `${user.id}/${fileName}`;
+    // get current avatar to delete later
+    const { data: currentProfile } = await supabase
+      .from("profiles")
+      .select("avatar_url")
+      .eq("id", user.id)
+      .single();
 
-  // ambil profile lama untuk menghapus avatar lama
-  const { data: currentProfile } = await supabase
-    .from("profiles")
-    .select("avatar_url")
-    .eq("id", user.id)
-    .single();
+    // upload file (upsert true to allow reupload of same path if needed)
+    const { error: uploadError } = await supabase.storage
+      .from("avatars")
+      .upload(filePath, file, {
+        cacheControl: "3600",
+        upsert: false,
+        contentType: file.type,
+      });
 
-  // upload file baru
-  const { error: uploadError } = await supabase.storage
-    .from("avatars")
-    .upload(filePath, file, {
-      cacheControl: "3600",
-      upsert: false, // jangan overwrite
-      contentType: file.type,
+    if (uploadError) {
+      // if conflict, try upsert true (edge case)
+      if (
+        uploadError.message &&
+        uploadError.message.includes("file already exists")
+      ) {
+        const { error: retryErr } = await supabase.storage
+          .from("avatars")
+          .upload(filePath, file, { upsert: true });
+        if (retryErr) throw retryErr;
+      } else {
+        throw uploadError;
+      }
+    }
+
+    // get public url
+    const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
+    const newUrl = `${data.publicUrl}?t=${Date.now()}`;
+
+    // update profile row
+    const { error: updateErr } = await supabase
+      .from("profiles")
+      .update({ avatar_url: newUrl, updated_at: new Date() })
+      .eq("id", user.id);
+
+    if (updateErr) throw updateErr;
+
+    // attempt delete old avatar if different
+    if (currentProfile && currentProfile.avatar_url) {
+      try {
+        const prefix = "/avatars/";
+        const idx = currentProfile.avatar_url.indexOf(prefix);
+        if (idx !== -1) {
+          // extract path after /avatars/
+          const oldPathWithQuery = currentProfile.avatar_url.slice(
+            idx + prefix.length
+          );
+          const oldPath = oldPathWithQuery.split("?")[0];
+          if (oldPath && oldPath !== filePath) {
+            await supabase.storage.from("avatars").remove([oldPath]);
+          }
+        }
+      } catch (err) {
+        console.warn("Gagal menghapus avatar lama:", err);
+      }
+    }
+
+    profileForm.value.avatar_url = newUrl;
+    alertSuccess("Avatar berhasil diunggah");
+  } catch (err) {
+    console.error("handleAvatarUpload:", err);
+    alertError("Upload avatar gagal");
+  } finally {
+    avatarUploading.value = false;
+    // clear file input (if needed)
+    event.target.value = "";
+  }
+};
+
+/* Change Email flow */
+const submitChangeEmail = async () => {
+  emailLoading.value = true;
+  try {
+    const newEmail = (emailForm.value.newEmail || "").trim().toLowerCase();
+    if (!newEmail) {
+      alertError("Masukkan email baru");
+      return;
+    }
+    if (newEmail === userEmail.value) {
+      alertError("Email baru sama dengan email saat ini");
+      return;
+    }
+
+    // optional: re-auth with password provided (not implemented server-side here)
+    // call supabase updateUser - this typically sends verification email
+    const { error } = await supabase.auth.updateUser({ email: newEmail });
+
+    if (error) {
+      // common: need re-auth, invalid email, or rate limits
+      throw error;
+    }
+
+    // inform user: verification required
+    alertSuccess(
+      "Permintaan perubahan email terkirim. Silakan cek email baru untuk verifikasi. Setelah verifikasi, login ulang mungkin diperlukan."
+    );
+
+    // reflect in UI only after verification; do not overwrite userEmail immediately.
+    showChangeEmailModal.value = false;
+    emailForm.value.newEmail = "";
+    emailForm.value.currentPassword = "";
+
+    // optionally refresh user object
+    // await loadUserAndProfile(); // do not overwrite userEmail until verified
+  } catch (err) {
+    console.error("submitChangeEmail:", err);
+    alertError(err?.message || "Gagal mengganti email");
+  } finally {
+    emailLoading.value = false;
+  }
+};
+
+/* Change password */
+const changePassword = async () => {
+  passwordLoading.value = true;
+  try {
+    if (passwordForm.value.newPassword !== passwordForm.value.confirmPassword) {
+      alertError("Password tidak cocok");
+      return;
+    }
+
+    if (passwordForm.value.newPassword.length < 6) {
+      alertError("Password minimal 6 karakter");
+      return;
+    }
+
+    const { error } = await supabase.auth.updateUser({
+      password: passwordForm.value.newPassword,
     });
 
-  if (uploadError) {
-    console.error(uploadError);
-    alert("Upload avatar gagal");
-    return;
+    if (error) throw error;
+
+    passwordForm.value.newPassword = "";
+    passwordForm.value.confirmPassword = "";
+    showChangePasswordModal.value = false;
+    alertSuccess("Password berhasil diubah");
+  } catch (err) {
+    console.error("changePassword:", err);
+    alertError(err?.message || "Gagal mengganti password");
+  } finally {
+    passwordLoading.value = false;
   }
-
-  // ambil public url
-  const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
-  const newUrl = `${data.publicUrl}?t=${Date.now()}`; // cache-busting
-
-  // simpan ke database
-  await supabase
-    .from("profiles")
-    .update({ avatar_url: newUrl })
-    .eq("id", user.id);
-
-  // hapus avatar lama jika ada
-  if (currentProfile && currentProfile.avatar_url) {
-    try {
-      const oldPath = currentProfile.avatar_url
-        .split("/avatars/")
-        .pop()
-        .split("?")[0];
-
-      if (oldPath && oldPath !== filePath) {
-        await supabase.storage.from("avatars").remove([oldPath]);
-      }
-    } catch (err) {
-      console.warn("Gagal menghapus avatar lama:", err);
-    }
-  }
-
-  profileForm.value.avatar_url = newUrl;
 };
 
-const changePassword = async () => {
-  if (passwordForm.value.newPassword !== passwordForm.value.confirmPassword) {
-    alert("Password tidak cocok");
-    return;
-  }
-
-  if (passwordForm.value.newPassword.length < 6) {
-    alert("Password minimal 6 karakter");
-    return;
-  }
-
-  await supabase.auth.updateUser({
-    password: passwordForm.value.newPassword,
-  });
-
+function cancelChangePassword() {
   passwordForm.value.newPassword = "";
   passwordForm.value.confirmPassword = "";
   showChangePasswordModal.value = false;
+}
 
-  alert("Password berhasil diubah");
-};
+/* Misc */
+async function handleLogout() {
+  try {
+    await supabase.auth.signOut();
+  } catch (err) {
+    console.warn("signOut error", err);
+  } finally {
+    router.push("/login");
+  }
+}
 
-const handleLogout = async () => {
-  await supabase.auth.signOut();
-  router.push("/login");
-};
+function copyEmail() {
+  if (!userEmail.value) return;
+  navigator.clipboard
+    .writeText(userEmail.value)
+    .then(() => alertSuccess("Email disalin ke clipboard"))
+    .catch(() => alertError("Gagal menyalin email"));
+}
+
+/* Expose to template */
 </script>
 
 <style scoped>

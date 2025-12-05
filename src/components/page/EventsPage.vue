@@ -443,6 +443,7 @@
         </div>
       </transition>
     </teleport>
+
     <teleport to="body">
       <transition name="modal-fade">
         <div
@@ -481,14 +482,15 @@
               <div class="flex items-center gap-2 text-sm text-slate-600">
                 <CalendarIcon class="w-4 h-4 text-[#3B6A9E]" />
                 {{
-                  new Date(selectedEvent?.event_date).toLocaleDateString(
-                    "id-ID",
-                    {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    }
-                  )
+                  selectedEvent?.event_date
+                    ? new Date(
+                        selectedEvent.event_date + "T00:00:00"
+                      ).toLocaleDateString("id-ID", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })
+                    : ""
                 }}
               </div>
 
@@ -625,7 +627,7 @@ const fetchEvents = async () => {
     if (selectedDate.value) {
       const match = normalizeDate(selectedDate.value);
       selectedDateEvents.value = events.value.filter(
-        (ev) => normalizeDate(ev.event_date) === match
+        (ev) => ev.event_date === match
       );
     }
   } catch (err) {
@@ -642,7 +644,6 @@ const fetchEvents = async () => {
 
 // OPEN detail by ID (dipanggil dari Home)
 const openDetailById = (id) => {
-  // FIX: UUID harus dicocokkan sebagai string
   const ev = events.value.find((e) => e.id === id);
   if (!ev) return;
   selectedEvent.value = ev;
@@ -708,11 +709,10 @@ const selectedDateText = computed(() =>
 const eventsThisMonth = computed(() => {
   const m = currentMonth.value;
   const y = currentYear.value;
-  return events.value.filter(
-    (e) =>
-      new Date(e.event_date).getMonth() === m &&
-      new Date(e.event_date).getFullYear() === y
-  ).length;
+  return events.value.filter((e) => {
+    const eventDate = new Date(e.event_date + "T00:00:00");
+    return eventDate.getMonth() === m && eventDate.getFullYear() === y;
+  }).length;
 });
 
 const summaryByCategory = computed(() => {
@@ -720,11 +720,10 @@ const summaryByCategory = computed(() => {
   const y = currentYear.value;
   const map = {};
   events.value
-    .filter(
-      (e) =>
-        new Date(e.event_date).getMonth() === m &&
-        new Date(e.event_date).getFullYear() === y
-    )
+    .filter((e) => {
+      const eventDate = new Date(e.event_date + "T00:00:00");
+      return eventDate.getMonth() === m && eventDate.getFullYear() === y;
+    })
     .forEach((ev) => {
       const c = ev.metadata?.category || "uncategorized";
       map[c] = (map[c] || 0) + 1;
@@ -732,13 +731,24 @@ const summaryByCategory = computed(() => {
   return map;
 });
 
-const normalizeDate = (value) =>
-  value ? new Date(value).toISOString().split("T")[0] : null;
+const normalizeDate = (value) => {
+  if (!value) return null;
+  const d = new Date(value);
+  // Format to YYYY-MM-DD in local timezone
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
 
 // HELPERS
 const eventsForDay = (date) => {
   const match = normalizeDate(date);
-  return events.value.filter((ev) => normalizeDate(ev.event_date) === match);
+  return events.value.filter((ev) => {
+    // Parse event_date as local date (not UTC)
+    const eventDateStr = ev.event_date;
+    return eventDateStr === match;
+  });
 };
 
 const dayClass = (day) => {
@@ -836,7 +846,7 @@ const openDay = (day) => {
   selectedDate.value = day.date;
   const match = normalizeDate(day.date);
   selectedDateEvents.value = events.value.filter(
-    (ev) => normalizeDate(ev.event_date) === match
+    (ev) => ev.event_date === match
   );
 
   isEditMode.value = selectedDateEvents.value.length === 0;
@@ -854,7 +864,7 @@ function cancelEdit() {
     category: "",
   };
 
-  closeModal(); // ini yang menutup modal
+  closeModal();
 }
 
 const closeModal = () => {
@@ -924,7 +934,7 @@ const saveEvent = async () => {
     if (selectedDate.value) {
       const match = normalizeDate(selectedDate.value);
       selectedDateEvents.value = events.value.filter(
-        (ev) => normalizeDate(ev.event_date) === match
+        (ev) => ev.event_date === match
       );
     }
 
