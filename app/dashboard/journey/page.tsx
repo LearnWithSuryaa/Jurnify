@@ -1,9 +1,10 @@
 import { Suspense } from "react";
 import JourneyClient from "./JourneyClient";
+import JourneySkeleton from "./components/JourneySkeleton";
 
 export default function JourneyPage() {
   return (
-    <Suspense fallback={<div className="p-10 text-center">Loading journey...</div>}>
+    <Suspense fallback={<JourneySkeleton />}>
       <JourneyClient />
     </Suspense>
   );

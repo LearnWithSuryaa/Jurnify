@@ -7,6 +7,7 @@ import { createSupabaseClient } from "../../../lib/supabaseClient";
 import EditProfileModal from "./components/EditProfileModal";
 import ChangeEmailModal from "./components/ChangeEmailModal";
 import ChangePasswordModal from "./components/ChangePasswordModal";
+import SettingsSkeleton from "./components/SettingsSkeleton";
 
 export default function Settings() {
   const router = useRouter();
@@ -179,11 +180,7 @@ export default function Settings() {
   };
 
   if (loading) {
-    return (
-        <div className="w-full min-h-screen flex items-center justify-center">
-            <div className="w-8 h-8 border-4 border-[#4A70A9] border-t-transparent rounded-full animate-spin"></div>
-        </div>
-    );
+    return <SettingsSkeleton />;
   }
 
   return (

@@ -25,6 +25,7 @@ import Link from "next/link";
 import { createSupabaseClient } from "@/lib/supabaseClient";
 import { useTasks } from "../../../hooks/useTasks";
 import { useEvents } from "../../../hooks/useEvents";
+import HomeSkeleton from "./components/HomeSkeleton";
 
 /* =========================================================
    TYPE DEFINITIONS (IDENTIK LOGIC DARI VUE)
@@ -100,14 +101,14 @@ const diffDaysLocal = (a: any, b: any) => { // eslint-disable-line @typescript-e
 export default function DashboardHome() {
   const router = useRouter();
   /* ================= FETCH (REPLACED WITH SWR) ================= */
-  const { tasks: tasksData } = useTasks();
-  const { events: eventsData } = useEvents();
+  const { tasks: tasksData, isLoading: tasksLoading } = useTasks();
+  const { events: eventsData, isLoading: eventsLoading } = useEvents();
 
   // Mapping to local interfaces if needed, or just casting
   // The hook returns mostly compatible types. 
   // We can just use them directly or alias them.
-  const tasks = tasksData as unknown as Task[]; 
-  const events = eventsData as unknown as EventItem[];
+  const tasks = (tasksData || []) as unknown as Task[]; 
+  const events = (eventsData || []) as unknown as EventItem[];
 
   const [currentTime, setCurrentTime] = useState(new Date());
   const [selectedDate] = useState(new Date());
@@ -236,6 +237,10 @@ export default function DashboardHome() {
   };
 
   /* ================= RENDER ================= */
+
+  if (tasksLoading || eventsLoading) {
+    return <HomeSkeleton />;
+  }
 
   return (
     <section className="relative w-full min-h-screen pt-10 pb-20 px-6 md:px-12 lg:px-16 bg-white/70 backdrop-blur-xl rounded-[2.5rem] shadow-xl border border-white/40">
