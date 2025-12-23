@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Plus,
@@ -17,8 +17,9 @@ import { createSupabaseClient } from "../../../lib/supabaseClient";
 import TaskFormModal, { Task } from "./components/TaskFormModal";
 import TaskDetailModal from "./components/TaskDetailModal";
 import { useTasks } from "../../../hooks/useTasks";
+import { Suspense } from "react";
 
-export default function JourneyPage() {
+function JourneyContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const supabase = createSupabaseClient();
@@ -33,8 +34,6 @@ export default function JourneyPage() {
   const [editingTaskData, setEditingTaskData] = useState<Partial<Task> | null>(
     null
   );
-
-  // Initial Fetch removed (handled by SWR)
 
   // Deep Linking Effect
   useEffect(() => {
@@ -434,5 +433,13 @@ export default function JourneyPage() {
         onDelete={handleDeleteTask}
       />
     </section>
+  );
+}
+
+export default function JourneyPage() {
+  return (
+    <Suspense fallback={<div className="p-10 text-center">Loading journey...</div>}>
+      <JourneyContent />
+    </Suspense>
   );
 }

@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Calendar as CalendarIcon,
   Timer,
   UserRound,
   Pin,
-  Trash2,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -16,6 +15,7 @@ import MonthYearPickerModal from "./components/MonthYearPickerModal";
 import EventFormModal, { Event } from "./components/EventFormModal";
 import EventDetailModal from "./components/EventDetailModal";
 import { useEvents } from "../../../hooks/useEvents";
+import { Suspense } from "react";
 
 // Icons Helper
 const CategoryIcon = ({
@@ -34,7 +34,7 @@ const CategoryIcon = ({
   return <Icon className={className} />;
 };
 
-export default function EventsPage() {
+function EventsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const supabase = createSupabaseClient();
@@ -56,8 +56,6 @@ export default function EventsPage() {
   const [editInitialData, setEditInitialData] = useState<Partial<Event> | null>(
     null
   );
-
-  // FETCH EVENTS
 
   // Deep Link
   useEffect(() => {
@@ -207,18 +205,6 @@ export default function EventsPage() {
 
   const openDay = (day: { date: Date; isCurrentMonth: boolean }) => {
     setSelectedDate(day.date);
-    const dayEvents = getEventsForDay(day.date);
-
-    // If events exist, open detail (or list logic if simplified)
-    // Here we replicate the Vue logic: if events exist, show a "List + Add" modal?
-    // The design shows a combined modal. For simplicity in this port, we will reuse EventFormModal
-    // but we might need a "DayDetailModal" if we strictly follow Vue.
-    // However, the provided Vue code shows a 'showModal' which handles both list and form.
-    // Let's stick to: Click day -> Open Form Modal (Add New) for now, or List if strictly needed.
-    // *Correction*: The Vue code has a list of existing events inside the 'showModal' when adding.
-    // To keep it simple for this step: Click Day -> Open Form Modal.
-    // If we want to view existing events, we click the *event pill* on the calendar.
-    
     // Logic: Click empty space in day -> Add New
     setIsEditMode(false);
     setEditInitialData(null);
@@ -451,8 +437,6 @@ export default function EventsPage() {
         onSave={handleSaveEvent}
       />
 
-
-
       <EventDetailModal
         isOpen={showDetailModal}
         onClose={closeDetailModal}
@@ -468,5 +452,13 @@ export default function EventsPage() {
         }}
       />
     </section>
+  );
+}
+
+export default function EventsPage() {
+  return (
+    <Suspense fallback={<div className="p-10 text-center">Loading events...</div>}>
+      <EventsContent />
+    </Suspense>
   );
 }
