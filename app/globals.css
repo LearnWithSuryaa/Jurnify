@@ -164,10 +164,13 @@ section#fitur {
 /* ===============================
    SPOTLIGHT SEARCH PILL (FIXED)
 ================================= */
+/* ===============================
+   SPOTLIGHT SEARCH PILL (FIXED)
+ ================================= */
 .left-pill {
   flex: 1; /* ☆ pusatkan auto-flex */
   display: flex;
-  justify-content: center;
+  justify-content: flex-start; /* Changed from center to allow truncation left align */
   align-items: center;
   gap: 8px;
 
@@ -189,10 +192,13 @@ section#fitur {
 
 /* Label mirip gaya Apple */
 .label-text {
-  font-size: 24px;
+  /* font-size: 24px; REMOVED: handled by Tailwind md:text-2xl */
   font-weight: 500;
   color: rgba(80, 80, 80, 0.38);
   transition: color 180ms ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .label-text:not(.muted) {
@@ -201,16 +207,15 @@ section#fitur {
 
 /* ===============================
    RIGHT ICONS
-================================= */
+ ================================= */
 .icons-list {
   display: flex;
-  gap: 6px;
+  /* gap: 6px; REMOVED: handled by Tailwind */
   padding-right: 0px;
 }
 
 .icon-btn {
-  width: 46px;
-  height: 46px;
+  /* width: 46px; height: 46px; REMOVED: handled by Tailwind */
   padding: 0;
   border: none;
   border-radius: 9999px;
@@ -221,8 +226,7 @@ section#fitur {
 }
 
 .icon-inner {
-  width: 46px;
-  height: 46px;
+  /* width: 46px; height: 46px; REMOVED: handled by Tailwind */
   border-radius: 9999px;
 
   /* Soft frosted glass */
@@ -247,19 +251,14 @@ section#fitur {
 }
 
 .spotlight-wrap nav {
-  padding-left: 50px !important;
-  padding-right: 40px !important;
+  /* padding-left: 50px !important; REMOVED */
+  /* padding-right: 40px !important; REMOVED */
+  /* Use Tailwind padding instead */
 }
 
-.left-pill {
-  min-width: 480px;
-}
+/* .left-pill { min-width: 480px; } REMOVED */
 
-.icons-list .icon-btn,
-.icons-list .icon-inner {
-  width: 54px;
-  height: 54px;
-}
+/* .icons-list .icon-btn, .icons-list .icon-inner { ... } REMOVED */
 
 /* ============================
    FOOTER GLASS STYLE

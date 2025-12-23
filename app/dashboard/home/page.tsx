@@ -249,7 +249,7 @@ export default function DashboardHome() {
         <div className="flex items-start justify-between mb-4">
           <div>
             <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 mb-2">
-              Selamat Datang!
+              Siap Produktif? ✨
             </h1>
             <p className="text-slate-600 text-lg">{currentDateLong}</p>
           </div>
@@ -437,8 +437,8 @@ export default function DashboardHome() {
             ) : (
               <div className="text-center py-12 text-slate-400">
                 <Award className="w-12 h-12 mx-auto mb-3 text-green-400" />
-                <div className="text-sm font-medium">Tidak ada tugas mendesak!</div>
-                <div className="text-xs">Semua tugas dalam kendali</div>
+                <div className="text-sm font-medium">Aman, nggak ada deadline mepet! 🎉</div>
+                <div className="text-xs">Kamu bisa chill atau lanjutin pending task lainnya.</div>
               </div>
             )}
           </div>

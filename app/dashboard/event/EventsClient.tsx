@@ -252,7 +252,7 @@ export default function EventsClient() {
   return (
     <section className="relative w-full min-h-screen pt-10 pb-20 px-6 md:px-12 lg:px-16 bg-white/70 backdrop-blur-xl rounded-[2.5rem] shadow-xl border border-white/40">
       {/* HEADER */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
         <div className="space-y-1">
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900">
             Calendar
@@ -262,40 +262,40 @@ export default function EventsClient() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3 bg-white/60 backdrop-blur-md px-4 py-2 rounded-2xl shadow-md">
+        <div className="self-start md:self-auto flex flex-wrap items-center gap-2 md:gap-3 bg-white/60 backdrop-blur-md px-3 py-2 rounded-2xl shadow-md w-full md:w-auto">
           <button
             onClick={() => {
               const now = new Date();
               setCurrentMonth(now.getMonth());
               setCurrentYear(now.getFullYear());
             }}
-            className="text-sm text-slate-600 hover:text-slate-900 px-3 py-2 rounded-lg cursor-pointer"
+            className="text-xs md:text-sm text-slate-600 hover:text-slate-900 px-2 md:px-3 py-2 rounded-lg cursor-pointer"
           >
             Today
           </button>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowMonthYearModal(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-slate-50 transition border border-slate-200 cursor-pointer"
-            >
-              <CalendarIcon className="w-5 h-5 text-slate-700" />
-              <span className="text-sm font-medium">
-                {monthName} {currentYear}
-              </span>
-            </button>
-          </div>
+          <div className="h-6 w-px bg-slate-200 hidden md:block" />
 
-          <div className="flex items-center bg-white rounded-xl shadow-sm px-2 py-1">
+          <button
+            onClick={() => setShowMonthYearModal(true)}
+            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-3 md:px-4 py-2 rounded-lg hover:bg-slate-50 transition border border-slate-200 cursor-pointer bg-white"
+          >
+            <CalendarIcon className="w-4 h-4 md:w-5 md:h-5 text-slate-700" />
+            <span className="text-xs md:text-sm font-medium whitespace-nowrap">
+              {monthName} {currentYear}
+            </span>
+          </button>
+
+          <div className="flex items-center bg-white rounded-xl shadow-sm px-1 md:px-2 py-1 ml-auto md:ml-0">
             <button
               onClick={() => changeMonth(-1)}
-              className="p-2 rounded-md hover:bg-slate-50 transition cursor-pointer"
+              className="p-1.5 md:p-2 rounded-md hover:bg-slate-50 transition cursor-pointer"
             >
               <ChevronLeft className="w-5 h-5 text-slate-600" />
             </button>
             <button
               onClick={() => changeMonth(1)}
-              className="p-2 rounded-md hover:bg-slate-50 transition cursor-pointer"
+              className="p-1.5 md:p-2 rounded-md hover:bg-slate-50 transition cursor-pointer"
             >
               <ChevronRight className="w-5 h-5 text-slate-600" />
             </button>
@@ -304,7 +304,7 @@ export default function EventsClient() {
       </div>
 
       {/* SUMMARY BAR */}
-      <div className="flex items-center justify-between bg-white/60 backdrop-blur-sm p-3 rounded-2xl shadow-sm mb-6">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-white/60 backdrop-blur-sm p-4 rounded-2xl shadow-sm mb-6">
         <div className="flex items-center gap-3">
           <div className="text-sm text-slate-700">Events this month:</div>
           <div className="text-sm font-semibold text-slate-900">
@@ -312,11 +312,11 @@ export default function EventsClient() {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 md:gap-3">
           {Object.entries(summaryByCategory).map(([cat, count]) => (
             <div
               key={cat}
-              className="text-xs px-2 py-1 rounded-full flex items-center gap-2 bg-white shadow-sm"
+              className="text-xs px-2.5 py-1.5 rounded-full flex items-center gap-2 bg-white shadow-sm border border-slate-100"
             >
               <span
                 className={`w-2 h-2 rounded-full ${categoryDotColor(cat)}`}

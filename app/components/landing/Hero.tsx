@@ -64,18 +64,17 @@ export default function Hero() {
         <div className="flex flex-col gap-8 translate-y-4">
           <div className="px-5 py-2 w-fit flex items-center gap-2 rounded-full bg-white/30 backdrop-blur-xl border border-white/40 text-[#2F3A4B] text-sm font-semibold shadow-sm">
             <Sparkles className="w-4 h-4 stroke-[#2F3A4B]" />
-            Productivity Reinvented
+            Productivity Reimagined
           </div>
 
           <h1 className="text-5xl md:text-6xl font-extrabold leading-tight text-[#2F3A4B] drop-shadow-sm">
-            Organize Smarter.<br />
-            <span className="text-[#3B6A9E]">Live Better.</span>
+            Atur Hidup.<br />
+            <span className="text-[#3B6A9E]">Sesuai Gayamu.</span>
           </h1>
 
           <p className="text-lg text-[#415167]/80 max-w-md">
-            Kelola catatan, jadwal, dan jurnalmu dalam pengalaman yang lebih rapi,
-            ekspresif, dan terasa personal. Produktivitas yang akhirnya sejalan
-            dengan gayamu.
+            Platform all-in-one buat atur jadwal, nulis jurnal, dan pantau habit. 
+            Tetap produktif, rapi, dan terorganisir tanpa kehilangan vibe unikmu.
           </p>
 
           <div className="flex gap-4 mt-2">

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { User, LogOut, Lock, Mail, Copy, Camera } from "lucide-react";
 import { createSupabaseClient } from "../../../lib/supabaseClient";
 import EditProfileModal from "./components/EditProfileModal";
@@ -201,13 +202,17 @@ export default function Settings() {
           <div className="bg-white/80 rounded-2xl p-6 shadow-sm border border-slate-100 text-center relative overflow-hidden group">
             <div className="relative w-28 h-28 mx-auto mb-4 group/avatar">
               {profile?.avatar_url ? (
-                <img
-                  src={profile.avatar_url}
-                  className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-md bg-slate-100"
-                  alt="Avatar"
-                />
+                <div className="relative w-28 h-28 mx-auto mb-4 group/avatar rounded-full overflow-hidden border-4 border-white shadow-md bg-slate-100">
+                  <Image
+                    src={profile.avatar_url}
+                    alt="Avatar"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
+                </div>
               ) : (
-                <div className="w-28 h-28 bg-gradient-to-br from-[#4A70A9] to-[#8FABD4] rounded-full flex items-center justify-center border-4 border-white shadow-md text-white">
+                <div className="w-28 h-28 bg-gradient-to-br from-[#4A70A9] to-[#8FABD4] rounded-full flex items-center justify-center border-4 border-white shadow-md text-white mb-4">
                   <User size={48} />
                 </div>
               )}

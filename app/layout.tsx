@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import CookieConsent from "./components/common/CookieConsent";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,7 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Jurnify",
   description:
-    "Jurnify membantu kamu mencatat jurnal harian, mengelola aktivitas, dan memantau perkembangan diri dengan lebih konsisten. Produktivitas yang terasa ringan, personal, dan selalu berkembang.",
+    "Teman produktivitas harianmu. Catat, atur, dan wujudkan goals dengan cara yang kamu banget. Simple, aesthetic, dan fokus pada progressmu.",
   icons: {
     icon: "/logo.webp", 
     shortcut: "/logo.webp",
@@ -34,6 +35,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
+        <CookieConsent />
       </body>
     </html>
   );

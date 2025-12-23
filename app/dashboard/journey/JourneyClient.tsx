@@ -229,96 +229,98 @@ export default function JourneyClient() {
       </div>
 
       {/* SUMMARY BAR */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div className="bg-white/60 backdrop-blur-sm p-4 rounded-2xl shadow-sm border-l-4 border-yellow-400">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-slate-600 mb-1">Pending</p>
-              <p className="text-3xl font-bold text-slate-900">
+            <div className="min-w-0">
+              <p className="text-sm text-slate-600 mb-1 truncate">Pending</p>
+              <p className="text-2xl md:text-3xl font-bold text-slate-900">
                 {tasksByStatus.pending}
               </p>
             </div>
-            <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
-              <Clock className="w-6 h-6 text-yellow-600" />
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-yellow-100 rounded-xl flex items-center justify-center shrink-0">
+              <Clock className="w-5 h-5 md:w-6 md:h-6 text-yellow-600" />
             </div>
           </div>
         </div>
 
         <div className="bg-white/60 backdrop-blur-sm p-4 rounded-2xl shadow-sm border-l-4 border-blue-400">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-slate-600 mb-1">In Progress</p>
-              <p className="text-3xl font-bold text-slate-900">
+            <div className="min-w-0">
+              <p className="text-sm text-slate-600 mb-1 truncate">In Progress</p>
+              <p className="text-2xl md:text-3xl font-bold text-slate-900">
                 {tasksByStatus.in_progress}
               </p>
             </div>
-            <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-              <Activity className="w-6 h-6 text-blue-600" />
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-blue-100 rounded-xl flex items-center justify-center shrink-0">
+              <Activity className="w-5 h-5 md:w-6 md:h-6 text-blue-600" />
             </div>
           </div>
         </div>
 
         <div className="bg-white/60 backdrop-blur-sm p-4 rounded-2xl shadow-sm border-l-4 border-green-400">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-slate-600 mb-1">Success</p>
-              <p className="text-3xl font-bold text-slate-900">
+            <div className="min-w-0">
+              <p className="text-sm text-slate-600 mb-1 truncate">Success</p>
+              <p className="text-2xl md:text-3xl font-bold text-slate-900">
                 {tasksByStatus.completed}
               </p>
             </div>
-            <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-              <CheckCircle2 className="w-6 h-6 text-green-600" />
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-green-100 rounded-xl flex items-center justify-center shrink-0">
+              <CheckCircle2 className="w-5 h-5 md:w-6 md:h-6 text-green-600" />
             </div>
           </div>
         </div>
 
         <div className="bg-white/60 backdrop-blur-sm p-4 rounded-2xl shadow-sm border-l-4 border-red-400">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-slate-600 mb-1">Cancelled</p>
-              <p className="text-3xl font-bold text-slate-900">
+            <div className="min-w-0">
+              <p className="text-sm text-slate-600 mb-1 truncate">Cancelled</p>
+              <p className="text-2xl md:text-3xl font-bold text-slate-900">
                 {tasksByStatus.cancelled}
               </p>
             </div>
-            <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
-              <XCircle className="w-6 h-6 text-red-600" />
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-red-100 rounded-xl flex items-center justify-center shrink-0">
+              <XCircle className="w-5 h-5 md:w-6 md:h-6 text-red-600" />
             </div>
           </div>
         </div>
       </div>
 
       {/* FILTER TABS */}
-      <div className="flex items-center gap-2 mb-6 bg-white/60 backdrop-blur-sm p-2 rounded-2xl shadow-sm w-fit">
-        {[
-          "all",
-          "pending",
-          "in_progress",
-          "completed",
-          "cancelled",
-        ].map((status) => (
-          <button
-            key={status}
-            onClick={() => setFilterStatus(status)}
-            className={`
-              px-6 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer
-              ${
-                filterStatus === status
-                  ? "bg-gradient-to-r from-[#3B6A9E] to-[#5a8bc4] text-white shadow-md"
-                  : "text-slate-600 hover:bg-slate-100"
-              }
-            `}
-          >
-            {status === "all"
-              ? "Semua"
-              : status === "pending"
-              ? "Pending"
-              : status === "in_progress"
-              ? "Progress"
-              : status === "completed"
-              ? "Success"
-              : "Cancelled"}
-          </button>
-        ))}
+      <div className="w-full overflow-x-auto no-scrollbar pb-2 mb-4">
+        <div className="flex items-center gap-2 bg-white/60 backdrop-blur-sm p-2 rounded-2xl shadow-sm w-max">
+          {[
+            "all",
+            "pending",
+            "in_progress",
+            "completed",
+            "cancelled",
+          ].map((status) => (
+            <button
+              key={status}
+              onClick={() => setFilterStatus(status)}
+              className={`
+                px-4 md:px-6 py-2 md:py-2.5 rounded-xl text-xs md:text-sm font-semibold transition-all cursor-pointer whitespace-nowrap
+                ${
+                  filterStatus === status
+                    ? "bg-gradient-to-r from-[#3B6A9E] to-[#5a8bc4] text-white shadow-md"
+                    : "text-slate-600 hover:bg-slate-100"
+                }
+              `}
+            >
+              {status === "all"
+                ? "Semua"
+                : status === "pending"
+                ? "Pending"
+                : status === "in_progress"
+                ? "Progress"
+                : status === "completed"
+                ? "Success"
+                : "Cancelled"}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* TASKS GRID */}

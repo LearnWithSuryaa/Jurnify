@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -20,7 +22,12 @@ export default function DashboardLayout({
   const router = useRouter();
   const pathname = usePathname();
 
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  // Default collapsed on mobile, expanded on desktop is handled via media query + initial props
+  // But here we basically just want boolean state. 
+  // For mobile, "collapsed" means HIDDEN. For desktop, "collapsed" means SLIM.
+  // Let's default to TRUE (Hidden/Slim) to avoid hydration mismatch if possible, or just false.
+  // Ideally use media query hook, but for now simple state:
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const toggleSidebar = () => setIsCollapsed((p) => !p);
 
   const contentInner = useRef<HTMLDivElement>(null);
@@ -73,21 +80,35 @@ export default function DashboardLayout({
 
   return (
     <section className="relative w-full min-h-screen flex bg-linear-to-br from-[#E6ECF5] via-[#C6D5EA] to-[#9AB8D4] overflow-hidden">
+      {/* MOBILE HEADER */}
+      <header className="fixed top-0 left-0 right-0 h-16 bg-white/40 backdrop-blur-xl border-b border-white/40 z-40 md:hidden flex items-center justify-between px-4">
+        <div className="flex items-center gap-2">
+          <Image src="/logo.webp" alt="logo" width={32} height={32} className="w-8 h-8" />
+          <span className="font-bold text-lg text-[#233041]">Jurnify</span>
+        </div>
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="p-2 bg-white rounded-full shadow-sm"
+        >
+          <ChevronLeft className={`w-5 h-5 text-[#2F3A4B] transition-transform ${isCollapsed ? "rotate-0" : "-rotate-90"}`} />
+        </button>
+      </header>
+
       {/* SIDEBAR */}
       <aside
         className={`sidebar-base ${isCollapsed ? "sidebar-c" : "sidebar-e"}`}
       >
-        {/* COLLAPSE BUTTON */}
+        {/* DESKTOP TOGGLE (Hidden on Mobile) */}
         <button
           onClick={toggleSidebar}
-          className={`sidebar-toggle cursor-pointer ${isCollapsed ? "rotate-180" : ""}`}
+          className={`sidebar-toggle cursor-pointer hidden md:flex ${isCollapsed ? "rotate-180" : ""}`}
         >
           <ChevronLeft className="w-4 h-4 text-[#2F3A4B]" />
         </button>
 
         {/* LOGO */}
         <div className={`logo-wrap ${isCollapsed ? "logo-c" : "logo-e"}`}>
-          <img src="/logo.webp" alt="logo" className="w-10 h-10" />
+          <Image src="/logo.webp" alt="logo" width={40} height={40} className="w-10 h-10" />
           {!isCollapsed && <h1 className="logo-title">Jurnify</h1>}
         </div>
 
@@ -168,32 +189,50 @@ export default function DashboardLayout({
         /* ---- Sidebar ---- */
         .sidebar-base {
           position: fixed;
-          top: 1rem;
-          left: 1rem;
-          height: calc(100vh - 2rem);
-          z-index: 30;
+          top: 0; 
+          left: 0; 
+          height: 100vh; 
+          z-index: 50;
           padding: 2rem 1.5rem;
-          background: rgba(255, 255, 255, 0.25);
+          background: rgba(255, 255, 255, 0.95); /* More opaque on mobile */
           backdrop-filter: blur(24px);
-          border: 1px solid rgba(255, 255, 255, 0.4);
-          border-radius: 1.5rem;
+          border-right: 1px solid rgba(255, 255, 255, 0.4);
           display: flex;
           flex-direction: column;
           box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
           transform-origin: left;
-          transition: width 0.55s cubic-bezier(0.25, 0.8, 0.25, 1),
-            transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s ease;
+          transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s ease, width 0.4s ease;
+        }
+
+        /* Desktop specific overrides */
+        @media (min-width: 768px) {
+          .sidebar-base {
+             top: 1rem;
+             left: 1rem;
+             height: calc(100vh - 2rem);
+             border: 1px solid rgba(255, 255, 255, 0.4);
+             border-radius: 1.5rem;
+             background: rgba(255, 255, 255, 0.25);
+          }
         }
 
         .sidebar-e {
           width: 270px;
-          opacity: 1;
-          transform: scaleX(1);
+          transform: translateX(0);
         }
+        
+        /* Mobile: Collapsed means hidden (translate -100%) */
+        /* Desktop: Collapsed means slim width */
         .sidebar-c {
-          width: 82px;
-          opacity: 0.94;
-          transform: scaleX(0.97);
+          transform: translateX(-100%);
+          width: 270px; /* Keep width but hide it */
+        }
+
+        @media (min-width: 768px) {
+          .sidebar-c {
+            transform: translateX(0) scaleX(0.97);
+            width: 82px;
+          }
         }
 
         .sidebar-toggle {
@@ -213,6 +252,14 @@ export default function DashboardLayout({
 
         .rotate-180 {
           transform: rotate(180deg);
+        }
+        
+        .rotate-0 {
+          transform: rotate(0deg);
+        }
+        
+        .rotate-minus-90 {
+          transform: rotate(-90deg);
         }
 
         /* ---- Logo ---- */
@@ -244,7 +291,14 @@ export default function DashboardLayout({
           gap: 0.5rem;
         }
         .menu-c {
-          align-items: center;
+          align-items: center; /* Centered on desktop collapsed */
+        }
+        
+        /* On mobile collapsed/sidebar, align items normally because it's just hidden/shown */
+        @media (max-width: 767px) {
+          .menu-c {
+             align-items: stretch;
+          }
         }
 
         .menu-item {
@@ -327,20 +381,29 @@ export default function DashboardLayout({
           z-index: 10;
           width: 100%;
           transition: margin-left 0.55s cubic-bezier(0.25, 0.8, 0.25, 1);
+          margin-left: 0; /* Mobile default */
         }
-
-        .content-e {
-          margin-left: 300px;
-        }
-        .content-c {
-          margin-left: 115px;
+        
+        @media (min-width: 768px) {
+            .content-e {
+              margin-left: 300px;
+            }
+            .content-c {
+              margin-left: 115px;
+            }
         }
 
         .content-anim {
-          padding: 5rem 2rem 4rem;
+          padding: 5rem 1rem 4rem; /* Reduced padding on mobile */
           opacity: 0;
           transform: translateY(25px);
           transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        
+        @media (min-width: 768px) {
+            .content-anim {
+                padding: 5rem 2rem 4rem;
+            }
         }
 
         .content-show {
