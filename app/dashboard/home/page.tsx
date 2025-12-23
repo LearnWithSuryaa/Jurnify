@@ -35,6 +35,7 @@ type TaskStatus = "pending" | "in_progress" | "completed" | "cancelled";
 interface Task {
   id: string;
   title: string;
+  description?: string;
   status: TaskStatus;
   due_date: string;
   created_at: string;
@@ -408,7 +409,18 @@ export default function DashboardHome() {
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-base font-bold text-slate-900 mb-2 line-clamp-2">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Clock className="w-3.5 h-3.5 text-red-500" />
+                          <span className={`text-xs font-bold ${diffDaysLocal(task.due_date, new Date()) < 0 ? "text-red-700 underline" : "text-red-600"}`}>
+                            {(() => {
+                                const diff = diffDaysLocal(task.due_date, new Date());
+                                if (diff < 0) return `Telat ${Math.abs(diff)} hari`;
+                                if (diff === 0) return "Hari ini";
+                                return `Kurang ${diff} hari`;
+                            })()}
+                          </span>
+                        </div>
+                        <h3 className="text-base font-bold text-slate-900 line-clamp-2">
                           {task.title}
                         </h3>
                       </div>
