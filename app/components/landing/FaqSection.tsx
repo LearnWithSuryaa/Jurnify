@@ -31,7 +31,7 @@ const faqItems = [
 
 export default function FaqSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const contentRefs = useRef<(HTMLDivElement | null)[]>([]);
+  // const contentRefs = useRef<(HTMLDivElement | null)[]>([]); // Removed unused ref
 
   const faqRef = useRef<HTMLElement | null>(null);
 
@@ -96,55 +96,77 @@ export default function FaqSection() {
       {/* FAQ List */}
       <div className="relative z-10 max-w-3xl mx-auto flex flex-col gap-6 px-6">
         {faqItems.map((item, i) => (
-          <div
+          <FaqItem
             key={i}
-            onClick={() => setOpenIndex(openIndex === i ? null : i)}
-            className="faq-card-anim glass-card p-6 rounded-2xl cursor-pointer transition-all duration-300"
-          >
-            <div className="flex justify-between items-center">
-              <h3 className="text-slate-800 font-semibold text-lg tracking-tight">
-                {item.q}
-              </h3>
-
-              <svg
-                className={`transition-transform duration-300 ${
-                  openIndex === i ? "rotate-180" : ""
-                }`}
-                width="22"
-                height="22"
-                fill="none"
-                stroke="#1a2b3c"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                viewBox="0 0 24 24"
-              >
-                <path d="M6 9l6 6 6-6" />
-              </svg>
-            </div>
-
-            {/* Answer */}
-            <div
-              style={{
-                height:
-                  openIndex === i
-                    ? `${contentRefs.current[i]?.scrollHeight}px`
-                    : "0px",
-              }}
-              className="overflow-hidden transition-[height] duration-300 ease"
-            >
-              <div
-                ref={(el) => {
-                  contentRefs.current[i] = el;
-                }}
-                className="pt-4 text-slate-700 leading-relaxed"
-              >
-                {item.a}
-              </div>
-            </div>
-          </div>
+            item={item}
+            isOpen={openIndex === i}
+            onToggle={() => setOpenIndex(openIndex === i ? null : i)}
+          />
         ))}
       </div>
     </section>
   );
 }
+
+function FaqItem({
+  item,
+  isOpen,
+  onToggle,
+}: {
+  item: { q: string; a: string };
+  isOpen: boolean;
+  onToggle: () => void;
+}) {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState(0);
+
+  useEffect(() => {
+    if (isOpen && contentRef.current) {
+      setHeight(contentRef.current.scrollHeight);
+    } else {
+      setHeight(0);
+    }
+  }, [isOpen]);
+
+  return (
+    <div
+      onClick={onToggle}
+      className="faq-card-anim glass-card p-6 rounded-2xl cursor-pointer transition-all duration-300"
+    >
+      <div className="flex justify-between items-center">
+        <h3 className="text-slate-800 font-semibold text-lg tracking-tight">
+          {item.q}
+        </h3>
+
+        <svg
+          className={`transition-transform duration-300 ${
+            isOpen ? "rotate-180" : ""
+          }`}
+          width="22"
+          height="22"
+          fill="none"
+          stroke="#1a2b3c"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          viewBox="0 0 24 24"
+        >
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </div>
+
+      {/* Answer */}
+      <div
+        style={{
+          height: `${height}px`,
+        }}
+        className="overflow-hidden transition-[height] duration-300 ease"
+      >
+        <div ref={contentRef} className="pt-4 text-slate-700 leading-relaxed">
+          {item.a}
+        </div>
+      </div>
+    </div>
+  );
+}
+

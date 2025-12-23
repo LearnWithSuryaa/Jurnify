@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { X, Lock, KeyRound } from "lucide-react";
+import { X, KeyRound } from "lucide-react";
 
 interface ChangePasswordModalProps {
   isOpen: boolean;

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { X, User } from "lucide-react";
+import { X } from "lucide-react";
 
 interface EditProfileModalProps {
   isOpen: boolean;

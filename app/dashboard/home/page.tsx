@@ -22,7 +22,6 @@ import {
 } from "lucide-react";
 
 import Link from "next/link";
-import { createSupabaseClient } from "@/lib/supabaseClient";
 import { useTasks } from "../../../hooks/useTasks";
 import { useEvents } from "../../../hooks/useEvents";
 import HomeSkeleton from "./components/HomeSkeleton";
