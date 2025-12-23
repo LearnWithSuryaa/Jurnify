@@ -499,7 +499,9 @@ export default function DashboardHome() {
                   <div className="text-sm font-semibold text-slate-900 truncate">
                     {task.title}
                   </div>
-                  <div className="text-xs text-slate-600">Dibuat</div>
+                  <div className="text-xs text-slate-600">
+                    Dibuat: {new Date(task.created_at).toLocaleDateString("id-ID", { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </div>
                 </div>
                 <ChevronRight className="w-4 h-4 text-slate-600" />
               </div>
