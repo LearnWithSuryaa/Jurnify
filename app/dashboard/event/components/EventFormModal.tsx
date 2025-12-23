@@ -140,7 +140,7 @@ export default function EventFormModal({
             </div>
             <button
               onClick={onClose}
-              className="text-white/80 hover:text-white hover:bg-white/20 p-2 rounded-full transition"
+              className="text-white/80 hover:text-white hover:bg-white/20 p-2 rounded-full transition cursor-pointer"
             >
               <X className="w-6 h-6" />
             </button>
@@ -198,7 +198,7 @@ export default function EventFormModal({
                     key={c}
                     onClick={() => setFormData({ ...formData, category: c })}
                     className={`
-                      group relative px-5 py-4 rounded-2xl border-2 transition-all duration-200 flex flex-col items-center gap-3
+                      group relative px-5 py-4 rounded-2xl border-2 transition-all duration-200 flex flex-col items-center gap-3 cursor-pointer
                       ${
                         isSelected
                           ? "bg-gradient-to-br from-[#3B6A9E] to-[#5a8bc4] border-[#3B6A9E] text-white shadow-lg scale-105"
@@ -227,14 +227,14 @@ export default function EventFormModal({
           <div className="flex items-center gap-3 justify-end pt-4 border-t">
             <button
               onClick={onClose}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition font-medium"
+              className="flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition font-medium cursor-pointer"
             >
               <X className="w-4 h-4" />
               Batal
             </button>
             <button
               onClick={handleSubmit}
-              className="px-8 py-3 rounded-xl bg-gradient-to-r from-[#3B6A9E] to-[#5a8bc4] text-white hover:shadow-lg hover:scale-105 transition font-bold flex items-center gap-2"
+              className="px-8 py-3 rounded-xl bg-gradient-to-r from-[#3B6A9E] to-[#5a8bc4] text-white hover:shadow-lg hover:scale-105 transition font-bold flex items-center gap-2 cursor-pointer"
             >
               <Check className="w-5 h-5" />
               {isEditMode ? "Update Event" : "Simpan Event"}

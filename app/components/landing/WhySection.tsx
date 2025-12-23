@@ -126,7 +126,7 @@ export default function WhySection() {
                 className="bg-white/60 max-w-lg w-[90%] rounded-2xl p-8 shadow-xl border border-white/40 relative"
               >
                 <button
-                  className="absolute top-3 right-3 bg-white/60 p-2 rounded-full"
+                  className="absolute top-3 right-3 bg-white/60 p-2 rounded-full cursor-pointer"
                   onClick={() => setSelected(null)}
                 >
                   <X className="w-5 h-5" />

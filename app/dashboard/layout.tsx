@@ -80,7 +80,7 @@ export default function DashboardLayout({
         {/* COLLAPSE BUTTON */}
         <button
           onClick={toggleSidebar}
-          className={`sidebar-toggle ${isCollapsed ? "rotate-180" : ""}`}
+          className={`sidebar-toggle cursor-pointer ${isCollapsed ? "rotate-180" : ""}`}
         >
           <ChevronLeft className="w-4 h-4 text-[#2F3A4B]" />
         </button>
@@ -100,7 +100,7 @@ export default function DashboardLayout({
               <button
                 key={item.id}
                 onClick={() => goTo(item.path)}
-                className={`menu-item
+                className={`menu-item cursor-pointer
                   ${isActive(item.path) ? "menu-active" : "menu-normal"}
                   ${isCollapsed ? "menu-center" : ""}
                   menu-stagger-${i}
@@ -134,7 +134,7 @@ export default function DashboardLayout({
               <button
                 key={item.id}
                 onClick={() => goTo(item.path)}
-                className={`menu-item
+                className={`menu-item cursor-pointer
                   ${isActive(item.path) ? "menu-active" : "menu-normal"}
                   ${isCollapsed ? "menu-center" : ""}
                   menu-stagger-${i + 3}

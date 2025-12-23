@@ -62,7 +62,7 @@ export default function EditProfileModal({
           <h3 className="font-bold text-lg text-slate-800">Edit Profile</h3>
           <button
             onClick={onClose}
-            className="p-1 hover:bg-slate-100 rounded-full transition"
+            className="p-1 hover:bg-slate-100 rounded-full transition cursor-pointer"
             type="button"
           >
             <X className="w-5 h-5 text-slate-500" />
@@ -122,7 +122,7 @@ export default function EditProfileModal({
           <div className="flex gap-3 pt-2">
             <button
               type="submit"
-              className="flex-1 py-2.5 bg-[#4A70A9] hover:bg-[#345c99] text-white rounded-xl font-semibold transition disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center"
+              className="flex-1 py-2.5 bg-[#4A70A9] hover:bg-[#345c99] text-white rounded-xl font-semibold transition disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center cursor-pointer"
               disabled={loading}
             >
               {loading ? (
@@ -138,7 +138,7 @@ export default function EditProfileModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-2 border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-xl font-medium transition"
+              className="px-6 py-2 border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-xl font-medium transition cursor-pointer"
               disabled={loading}
             >
               Batal

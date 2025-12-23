@@ -65,7 +65,7 @@ export default function EventDetailModal({
 
           <button
             onClick={onClose}
-            className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-100 transition"
+            className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-100 transition cursor-pointer"
           >
             <X className="w-5 h-5 text-slate-600" />
           </button>
@@ -108,7 +108,7 @@ export default function EventDetailModal({
         <div className="px-6 py-4 border-t border-slate-200 flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 transition"
+            className="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 transition cursor-pointer"
           >
             Tutup
           </button>
@@ -118,7 +118,7 @@ export default function EventDetailModal({
                 if (event.id) onDelete(event.id);
                 onClose();
             }}
-            className="px-4 py-2 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition shadow-sm font-medium"
+            className="px-4 py-2 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition shadow-sm font-medium cursor-pointer"
           >
             Hapus
           </button>
@@ -128,7 +128,7 @@ export default function EventDetailModal({
               onEdit(event);
               onClose();
             }}
-            className="px-4 py-2 rounded-xl bg-[#3B6A9E] text-white hover:bg-[#345d8a] transition shadow-sm font-medium"
+            className="px-4 py-2 rounded-xl bg-[#3B6A9E] text-white hover:bg-[#345d8a] transition shadow-sm font-medium cursor-pointer"
           >
             Edit
           </button>

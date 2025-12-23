@@ -221,7 +221,7 @@ export default function JourneyClient() {
 
         <button
           onClick={openAddModal}
-          className="flex items-center gap-2 bg-gradient-to-r from-[#3B6A9E] to-[#5a8bc4] text-white px-6 py-3 rounded-2xl shadow-md hover:shadow-lg hover:scale-105 transition font-semibold"
+          className="flex items-center gap-2 bg-gradient-to-r from-[#3B6A9E] to-[#5a8bc4] text-white px-6 py-3 rounded-2xl shadow-md hover:shadow-lg hover:scale-105 transition font-semibold cursor-pointer"
         >
           <Plus className="w-5 h-5" />
           Tambah Task
@@ -300,7 +300,7 @@ export default function JourneyClient() {
             key={status}
             onClick={() => setFilterStatus(status)}
             className={`
-              px-6 py-2.5 rounded-xl text-sm font-semibold transition-all
+              px-6 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer
               ${
                 filterStatus === status
                   ? "bg-gradient-to-r from-[#3B6A9E] to-[#5a8bc4] text-white shadow-md"
@@ -355,7 +355,7 @@ export default function JourneyClient() {
                       e.stopPropagation();
                       openEditModal(task);
                     }}
-                    className="opacity-0 group-hover:opacity-100 transition p-2 hover:bg-slate-100 rounded-lg"
+                    className="opacity-0 group-hover:opacity-100 transition p-2 hover:bg-slate-100 rounded-lg cursor-pointer"
                   >
                     <Edit3 className="w-4 h-4 text-slate-600" />
                   </button>
@@ -406,7 +406,7 @@ export default function JourneyClient() {
             </p>
             <button
               onClick={openAddModal}
-              className="flex items-center gap-2 bg-gradient-to-r from-[#3B6A9E] to-[#5a8bc4] text-white px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition font-semibold"
+              className="flex items-center gap-2 bg-gradient-to-r from-[#3B6A9E] to-[#5a8bc4] text-white px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition font-semibold cursor-pointer"
             >
               <Plus className="w-5 h-5" />
               Tambah Task Pertama

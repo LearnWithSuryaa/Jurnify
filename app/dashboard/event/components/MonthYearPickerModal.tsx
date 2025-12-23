@@ -59,7 +59,7 @@ export default function MonthYearPickerModal({
           </h3>
           <button
             onClick={onClose}
-            className="text-slate-600 hover:text-slate-900"
+            className="text-slate-600 hover:text-slate-900 cursor-pointer"
           >
             ✕
           </button>
@@ -71,7 +71,7 @@ export default function MonthYearPickerModal({
           <div className="flex items-center gap-3">
             <button
               onClick={() => onYearChange(-1)}
-              className="p-2 rounded-lg hover:bg-slate-100 transition"
+              className="p-2 rounded-lg hover:bg-slate-100 transition cursor-pointer"
             >
               ◀
             </button>
@@ -82,7 +82,7 @@ export default function MonthYearPickerModal({
             </div>
             <button
               onClick={() => onYearChange(1)}
-              className="p-2 rounded-lg hover:bg-slate-100 transition"
+              className="p-2 rounded-lg hover:bg-slate-100 transition cursor-pointer"
             >
               ▶
             </button>
@@ -98,7 +98,7 @@ export default function MonthYearPickerModal({
                 key={m}
                 onClick={() => onSelectMonth(i)}
                 className={`
-                  px-4 py-3 rounded-xl text-sm transition font-medium
+                  px-4 py-3 rounded-xl text-sm transition font-medium cursor-pointer
                   ${
                     i === currentMonth
                       ? "bg-[#3B6A9E] text-white shadow-md"

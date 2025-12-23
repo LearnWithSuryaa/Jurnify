@@ -329,7 +329,7 @@ export default function DashboardHome() {
                   hasEvents(day.date) && !isToday(day.date)
                     ? "bg-blue-50 border-2 border-blue-200"
                     : "",
-                ].join(" ")}
+                ].join(" ") + " cursor-pointer"}
               >
                 {day.date.getDate()}
                 {hasEvents(day.date) && (

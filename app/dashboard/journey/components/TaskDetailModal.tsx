@@ -119,7 +119,7 @@ export default function TaskDetailModal({
             </div>
             <button
               onClick={onClose}
-              className="text-white/80 hover:text-white hover:bg-white/20 p-2 rounded-full transition"
+              className="text-white/80 hover:text-white hover:bg-white/20 p-2 rounded-full transition cursor-pointer"
             >
               <X className="w-6 h-6" />
             </button>
@@ -144,14 +144,14 @@ export default function TaskDetailModal({
             <div className="flex items-center gap-3 pt-4 border-t">
               <button
                 onClick={onEdit}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-[#3B6A9E] text-white rounded-xl hover:bg-[#2f5680] transition font-semibold"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-[#3B6A9E] text-white rounded-xl hover:bg-[#2f5680] transition font-semibold cursor-pointer"
               >
                 <Edit3 className="w-5 h-5" />
                 Edit Task
               </button>
               <button
                 onClick={() => onDelete(task.id)}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition font-semibold"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition font-semibold cursor-pointer"
               >
                 <Trash2 className="w-5 h-5" />
                 Hapus Task

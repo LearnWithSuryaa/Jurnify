@@ -269,7 +269,7 @@ export default function EventsClient() {
               setCurrentMonth(now.getMonth());
               setCurrentYear(now.getFullYear());
             }}
-            className="text-sm text-slate-600 hover:text-slate-900 px-3 py-2 rounded-lg"
+            className="text-sm text-slate-600 hover:text-slate-900 px-3 py-2 rounded-lg cursor-pointer"
           >
             Today
           </button>
@@ -277,7 +277,7 @@ export default function EventsClient() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowMonthYearModal(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-slate-50 transition border border-slate-200"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-slate-50 transition border border-slate-200 cursor-pointer"
             >
               <CalendarIcon className="w-5 h-5 text-slate-700" />
               <span className="text-sm font-medium">
@@ -289,13 +289,13 @@ export default function EventsClient() {
           <div className="flex items-center bg-white rounded-xl shadow-sm px-2 py-1">
             <button
               onClick={() => changeMonth(-1)}
-              className="p-2 rounded-md hover:bg-slate-50 transition"
+              className="p-2 rounded-md hover:bg-slate-50 transition cursor-pointer"
             >
               <ChevronLeft className="w-5 h-5 text-slate-600" />
             </button>
             <button
               onClick={() => changeMonth(1)}
-              className="p-2 rounded-md hover:bg-slate-50 transition"
+              className="p-2 rounded-md hover:bg-slate-50 transition cursor-pointer"
             >
               <ChevronRight className="w-5 h-5 text-slate-600" />
             </button>

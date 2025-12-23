@@ -61,7 +61,7 @@ export default function AboutPage() {
       {/* CTA */}
       <div className="flex gap-4 mt-10 z-10">
         <Link href="/login">
-          <button className="px-8 py-3 bg-[#3B6A9E] hover:bg-[#365F90] text-white rounded-2xl font-semibold shadow-md transition-all active:scale-95 flex items-center gap-2">
+          <button className="px-8 py-3 bg-[#3B6A9E] hover:bg-[#365F90] text-white rounded-2xl font-semibold shadow-md transition-all active:scale-95 flex items-center gap-2 cursor-pointer">
             <ArrowRight className="w-4 h-4" />
             Get Started
           </button>
