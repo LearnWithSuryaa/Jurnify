@@ -13,6 +13,7 @@ import {
   XCircle,
   ChevronRight,
 } from "lucide-react";
+import { motion } from "framer-motion";
 import { createSupabaseClient } from "../../../lib/supabaseClient";
 import TaskFormModal, { Task } from "./components/TaskFormModal";
 import TaskDetailModal from "./components/TaskDetailModal";
@@ -207,9 +208,25 @@ export default function JourneyClient() {
   };
 
   return (
-    <section className="relative w-full min-h-screen pt-10 pb-20 px-6 md:px-12 lg:px-16 bg-white/70 backdrop-blur-xl rounded-[2.5rem] shadow-xl border border-white/40">
+    <motion.section 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="relative w-full min-h-screen pt-10 pb-20 px-6 md:px-12 lg:px-16 bg-white/70 backdrop-blur-xl rounded-[2.5rem] shadow-xl border border-white/40 overflow-hidden"
+    >
+      {/* Dynamic Background Elements */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
+        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-[#3b6a9e]/20 rounded-full blur-[100px] mix-blend-multiply animate-blob" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-indigo-200/40 rounded-full blur-[120px] mix-blend-multiply animate-blob animation-delay-2000" />
+        <div className="absolute top-[20%] left-[20%] w-[400px] h-[400px] bg-cyan-100/40 rounded-full blur-[90px] mix-blend-multiply animate-blob animation-delay-4000" />
+      </div>
+
       {/* HEADER */}
-      <div className="flex items-center justify-between mb-6">
+      <motion.div 
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.1 }}
+        className="flex items-center justify-between mb-6"
+      >
         <div className="space-y-1">
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900">
             Journey
@@ -226,10 +243,15 @@ export default function JourneyClient() {
           <Plus className="w-5 h-5" />
           Tambah Task
         </button>
-      </div>
+      </motion.div>
 
       {/* SUMMARY BAR */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <motion.div 
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.2 }}
+        className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
+      >
         <div className="bg-white/60 backdrop-blur-sm p-4 rounded-2xl shadow-sm border-l-4 border-yellow-400">
           <div className="flex items-center justify-between">
             <div className="min-w-0">
@@ -285,10 +307,15 @@ export default function JourneyClient() {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* FILTER TABS */}
-      <div className="w-full overflow-x-auto no-scrollbar pb-2 mb-4">
+      <motion.div 
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.3 }}
+        className="w-full overflow-x-auto no-scrollbar pb-2 mb-4"
+      >
         <div className="flex items-center gap-2 bg-white/60 backdrop-blur-sm p-2 rounded-2xl shadow-sm w-max">
           {[
             "all",
@@ -304,7 +331,7 @@ export default function JourneyClient() {
                 px-4 md:px-6 py-2 md:py-2.5 rounded-xl text-xs md:text-sm font-semibold transition-all cursor-pointer whitespace-nowrap
                 ${
                   filterStatus === status
-                    ? "bg-gradient-to-r from-[#3B6A9E] to-[#5a8bc4] text-white shadow-md"
+                    ? "bg-gradient-to-r from-[#3B6A9E] to-[#5a8bc4] text-white shadow-md transform scale-105"
                     : "text-slate-600 hover:bg-slate-100"
                 }
               `}
@@ -321,14 +348,21 @@ export default function JourneyClient() {
             </button>
           ))}
         </div>
-      </div>
+      </motion.div>
 
       {/* TASKS GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredTasks.map((task) => {
+      <motion.div 
+        layout
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+      >
+        {filteredTasks.map((task, idx) => {
           const StatusIcon = statusIcon(task.status);
           return (
-            <div
+            <motion.div
+              layout
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.4 + (idx * 0.05) }}
               key={task.id}
               onClick={() => openDetailModal(task)}
               className={`group cursor-pointer bg-white/60 backdrop-blur-md rounded-2xl shadow-sm hover:shadow-xl border-2 transition-all duration-300 overflow-hidden hover:scale-[1.02] ${taskBorderColor(
@@ -390,7 +424,7 @@ export default function JourneyClient() {
                   <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-[#3B6A9E] transition" />
                 </div>
               </div>
-            </div>
+            </motion.div>
           );
         })}
 
@@ -415,7 +449,7 @@ export default function JourneyClient() {
             </button>
           </div>
         )}
-      </div>
+      </motion.div>
 
       {/* Component Modals */}
       <TaskFormModal
@@ -433,6 +467,6 @@ export default function JourneyClient() {
         onEdit={editFromDetail}
         onDelete={handleDeleteTask}
       />
-    </section>
+    </motion.section>
   );
 }

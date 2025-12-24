@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import { motion } from "framer-motion";
 import { createSupabaseClient } from "../../../lib/supabaseClient";
 import MonthYearPickerModal from "./components/MonthYearPickerModal";
 import EventFormModal, { Event } from "./components/EventFormModal";
@@ -250,9 +251,25 @@ export default function EventsClient() {
   };
 
   return (
-    <section className="relative w-full min-h-screen pt-10 pb-20 px-6 md:px-12 lg:px-16 bg-white/70 backdrop-blur-xl rounded-[2.5rem] shadow-xl border border-white/40">
+    <motion.section 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="relative w-full min-h-screen pt-10 pb-20 px-6 md:px-12 lg:px-16 bg-white/70 backdrop-blur-xl rounded-[2.5rem] shadow-xl border border-white/40 overflow-hidden"
+    >
+      {/* Dynamic Background Elements */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
+        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-[#3b6a9e]/20 rounded-full blur-[100px] mix-blend-multiply animate-blob" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-indigo-200/40 rounded-full blur-[120px] mix-blend-multiply animate-blob animation-delay-2000" />
+        <div className="absolute top-[20%] left-[20%] w-[400px] h-[400px] bg-cyan-100/40 rounded-full blur-[90px] mix-blend-multiply animate-blob animation-delay-4000" />
+      </div>
+
       {/* HEADER */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
+      <motion.div 
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.1 }}
+        className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6"
+      >
         <div className="space-y-1">
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900">
             Calendar
@@ -301,10 +318,15 @@ export default function EventsClient() {
             </button>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* SUMMARY BAR */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-white/60 backdrop-blur-sm p-4 rounded-2xl shadow-sm mb-6">
+      <motion.div 
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.2 }}
+        className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-white/60 backdrop-blur-sm p-4 rounded-2xl shadow-sm mb-6"
+      >
         <div className="flex items-center gap-3">
           <div className="text-sm text-slate-700">Events this month:</div>
           <div className="text-sm font-semibold text-slate-900">
@@ -326,19 +348,29 @@ export default function EventsClient() {
             </div>
           ))}
         </div>
-      </div>
+      </motion.div>
 
       {/* WEEK DAYS */}
-      <div className="grid grid-cols-7 text-center text-xs md:text-sm font-semibold text-slate-600 mb-2">
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3 }}
+        className="grid grid-cols-7 text-center text-xs md:text-sm font-semibold text-slate-600 mb-2"
+      >
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
           <div key={d} className="py-2">
             {d}
           </div>
         ))}
-      </div>
+      </motion.div>
 
       {/* CALENDAR GRID */}
-      <div className="grid grid-cols-7 gap-3">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="grid grid-cols-7 gap-3"
+      >
         {daysGrid.map((day, idx) => {
           const isToday =
             day.date.toDateString() === new Date().toDateString();
@@ -411,7 +443,7 @@ export default function EventsClient() {
             </div>
           );
         })}
-      </div>
+      </motion.div>
 
       {/* MODALS */}
       <MonthYearPickerModal
@@ -449,6 +481,6 @@ export default function EventsClient() {
           setTimeout(() => setShowFormModal(true), 200);
         }}
       />
-    </section>
+    </motion.section>
   );
 }

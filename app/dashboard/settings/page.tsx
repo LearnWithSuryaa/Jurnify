@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { User, LogOut, Lock, Mail, Copy, Camera } from "lucide-react";
+import { motion } from "framer-motion";
 import { createSupabaseClient } from "../../../lib/supabaseClient";
 import EditProfileModal from "./components/EditProfileModal";
 import ChangeEmailModal from "./components/ChangeEmailModal";
@@ -185,18 +186,39 @@ export default function Settings() {
   }
 
   return (
-    <section className="relative w-full min-h-screen pt-10 pb-20 px-6 md:px-12 lg:px-16 bg-white/70 backdrop-blur-xl rounded-[2.5rem] shadow-xl border border-white/40">
+    <motion.section 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="relative w-full min-h-screen pt-10 pb-20 px-6 md:px-12 lg:px-16 bg-white/70 backdrop-blur-xl rounded-[2.5rem] shadow-xl border border-white/40 overflow-hidden"
+    >
+      {/* Dynamic Background Elements */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
+        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-[#3b6a9e]/20 rounded-full blur-[100px] mix-blend-multiply animate-blob" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-indigo-200/40 rounded-full blur-[120px] mix-blend-multiply animate-blob animation-delay-2000" />
+        <div className="absolute top-[20%] left-[20%] w-[400px] h-[400px] bg-cyan-100/40 rounded-full blur-[90px] mix-blend-multiply animate-blob animation-delay-4000" />
+      </div>
+
       {/* HEADER */}
-      <div className="mb-8">
+      <motion.div 
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.1 }}
+        className="mb-8"
+      >
         <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-2">
           Settings
         </h1>
         <p className="text-slate-600 text-lg">Kelola preferensi dan akun Anda</p>
-      </div>
+      </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* LEFT COLUMN */}
-        <div className="space-y-6">
+        <motion.div 
+          initial={{ x: -20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="space-y-6"
+        >
           
           {/* PROFILE CARD */}
           <div className="bg-white/80 rounded-2xl p-6 shadow-sm border border-slate-100 text-center relative overflow-hidden group">
@@ -212,7 +234,7 @@ export default function Settings() {
                   />
                 </div>
               ) : (
-                <div className="w-28 h-28 bg-gradient-to-br from-[#4A70A9] to-[#8FABD4] rounded-full flex items-center justify-center border-4 border-white shadow-md text-white mb-4">
+                <div className="w-28 h-28 bg-gradient-to-br from-[#3B6A9E] to-[#5a8bc4] rounded-full flex items-center justify-center border-4 border-white shadow-md text-white mb-4">
                   <User size={48} />
                 </div>
               )}
@@ -250,7 +272,7 @@ export default function Settings() {
 
             <button
               onClick={() => setShowEditProfile(true)}
-              className="w-full py-2.5 bg-[#4A70A9] hover:bg-[#3b5d8f] text-white rounded-xl font-semibold transition shadow-sm active:scale-[0.98] cursor-pointer"
+              className="w-full py-2.5 bg-[#3B6A9E] hover:bg-[#2d527a] text-white rounded-xl font-semibold transition shadow-sm active:scale-[0.98] cursor-pointer"
             >
               Edit Profile
             </button>
@@ -259,7 +281,7 @@ export default function Settings() {
           {/* STATS CARD */}
           <div className="bg-white/80 rounded-2xl p-6 shadow-sm border border-slate-100">
             <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
-                <span className="w-1.5 h-6 bg-[#4A70A9] rounded-full"></span>
+                <span className="w-1.5 h-6 bg-[#3B6A9E] rounded-full"></span>
                 Statistik Akun
             </h3>
 
@@ -278,10 +300,15 @@ export default function Settings() {
                 </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* RIGHT COLUMN */}
-        <div className="lg:col-span-2 space-y-6">
+        <motion.div 
+           initial={{ x: 20, opacity: 0 }}
+           animate={{ x: 0, opacity: 1 }}
+           transition={{ delay: 0.3 }}
+           className="lg:col-span-2 space-y-6"
+        >
           <div className="bg-white/80 rounded-2xl p-6 shadow-sm border border-slate-100 space-y-4">
             
             <h3 className="font-bold text-slate-800 mb-2 flex items-center gap-2">
@@ -295,17 +322,17 @@ export default function Settings() {
                 className="group border border-slate-100 rounded-xl p-4 cursor-pointer hover:bg-slate-50/80 hover:border-slate-200 transition flex items-center justify-between"
             >
                 <div>
-                    <strong className="text-slate-800 group-hover:text-[#4A70A9] transition">Ganti Password</strong>
+                    <strong className="text-slate-800 group-hover:text-[#3B6A9E] transition">Ganti Password</strong>
                     <p className="text-sm text-slate-500">Ubah password akun demi keamanan</p>
                 </div>
-                <Lock className="w-5 h-5 text-slate-300 group-hover:text-[#4A70A9] transition" />
+                <Lock className="w-5 h-5 text-slate-300 group-hover:text-[#3B6A9E] transition" />
             </div>
 
             {/* Email Section */}
             <div className="border border-slate-100 rounded-xl p-4">
               <div className="flex items-center justify-between flex-wrap gap-4">
                 <div className="flex items-center gap-3">
-                    <div className="p-2.5 bg-blue-50 text-[#4A70A9] rounded-full">
+                    <div className="p-2.5 bg-blue-50 text-[#3B6A9E] rounded-full">
                         <Mail className="w-5 h-5" />
                     </div>
                     <div>
@@ -321,7 +348,7 @@ export default function Settings() {
 
                 <button
                   onClick={() => setShowChangeEmail(true)}
-                  className="px-4 py-2 border border-slate-200 hover:border-[#4A70A9] hover:text-[#4A70A9] rounded-xl text-sm font-medium transition bg-white cursor-pointer"
+                  className="px-4 py-2 border border-slate-200 hover:border-[#3B6A9E] hover:text-[#3B6A9E] rounded-xl text-sm font-medium transition bg-white cursor-pointer"
                 >
                   Ganti Email
                 </button>
@@ -331,7 +358,7 @@ export default function Settings() {
 
           {/* LOGOUT */}
           <div
-            className="bg-gradient-to-br from-[#4A70A9] to-[#8FABD4] rounded-2xl p-6 text-white flex items-center justify-between shadow-lg shadow-[#4A70A9]/20"
+            className="bg-gradient-to-br from-[#3B6A9E] to-[#5a8bc4] rounded-2xl p-6 text-white flex items-center justify-between shadow-lg shadow-[#3B6A9E]/20"
           >
             <div>
               <h3 className="font-bold text-lg">Keluar dari Akun</h3>
@@ -346,7 +373,7 @@ export default function Settings() {
               Logout
             </button>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* MODALS */}
@@ -373,6 +400,6 @@ export default function Settings() {
         onSave={handleUpdatePassword}
       />
 
-    </section>
+    </motion.section>
   );
 }
