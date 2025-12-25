@@ -19,6 +19,8 @@ import {
 import { TimerProvider } from "./context/TimerContext";
 import TimerWidget from "./components/TimerWidget";
 
+import { createSupabaseClient } from "../../lib/supabaseClient";
+
 export default function DashboardLayout({
   children,
 }: {
@@ -26,6 +28,14 @@ export default function DashboardLayout({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const supabase = createSupabaseClient();
+
+  const handleLogout = async () => {
+      await supabase.auth.signOut();
+      router.push("/login");
+  };
+
+  // ... (existing code)
 
   // Default collapsed on mobile, expanded on desktop is handled via media query + initial props
   // But here we basically just want boolean state. 
@@ -167,7 +177,13 @@ export default function DashboardLayout({
               return (
                 <button
                   key={item.id}
-                  onClick={() => goTo(item.path)}
+                  onClick={() => {
+                        if (item.label === "Logout") {
+                            handleLogout();
+                        } else {
+                            goTo(item.path);
+                        }
+                  }}
                   className={`menu-item cursor-pointer
                     ${isActive(item.path) ? "menu-active" : "menu-normal"}
                     ${isCollapsed ? "menu-center" : ""}
