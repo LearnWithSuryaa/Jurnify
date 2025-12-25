@@ -11,8 +11,13 @@ import {
   Calendar,
   Settings,
   LogOut,
+  BarChart2,
+  Target,
+  Book,
   ChevronLeft,
 } from "lucide-react";
+import { TimerProvider } from "./context/TimerContext";
+import TimerWidget from "./components/TimerWidget";
 
 export default function DashboardLayout({
   children,
@@ -34,6 +39,9 @@ export default function DashboardLayout({
 
   const mainMenu = [
     { id: 1, label: "Home", icon: Home, path: "/dashboard/home" },
+    { id: 6, label: "Journal", icon: Book, path: "/dashboard/journal" },
+    { id: 7, label: "Analytics", icon: BarChart2, path: "/dashboard/analytics" },
+    { id: 8, label: "Focus", icon: Target, path: "/dashboard/focus" },
     {
       id: 2,
       label: "Journey",
@@ -45,7 +53,7 @@ export default function DashboardLayout({
 
   const bottomMenu = [
     { id: 4, label: "Pengaturan", icon: Settings, path: "/dashboard/settings" },
-    { id: 5, label: "Logout", icon: LogOut, path: "/" },
+    { id: 5, label: "Logout", icon: LogOut, path: "/login" },
   ];
 
   const goTo = (path: string) => router.push(path);
@@ -79,110 +87,116 @@ export default function DashboardLayout({
   }, []);
 
   return (
-    <section className="relative w-full min-h-screen flex bg-linear-to-br from-[#E6ECF5] via-[#C6D5EA] to-[#9AB8D4] overflow-hidden">
-      {/* MOBILE HEADER */}
-      <header className="fixed top-0 left-0 right-0 h-16 bg-white/40 backdrop-blur-xl border-b border-white/40 z-40 md:hidden flex items-center justify-between px-4">
-        <div className="flex items-center gap-2">
-          <Image src="/logo.webp" alt="logo" width={32} height={32} className="w-8 h-8" />
-          <span className="font-bold text-lg text-[#233041]">Jurnify</span>
-        </div>
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-2 bg-white rounded-full shadow-sm"
+    <TimerProvider>
+      <section className="relative w-full min-h-screen flex bg-linear-to-br from-[#E6ECF5] via-[#C6D5EA] to-[#9AB8D4] overflow-hidden">
+        
+        {/* Timer Widget */}
+        <TimerWidget />
+
+        {/* MOBILE HEADER */}
+        <header className="fixed top-0 left-0 right-0 h-16 bg-white/40 backdrop-blur-xl border-b border-white/40 z-40 md:hidden flex items-center justify-between px-4">
+          <div className="flex items-center gap-2">
+            <Image src="/logo.webp" alt="logo" width={32} height={32} className="w-8 h-8" />
+            <span className="font-bold text-lg text-[#233041]">Jurnify</span>
+          </div>
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="p-2 bg-white rounded-full shadow-sm"
+          >
+            <ChevronLeft className={`w-5 h-5 text-[#2F3A4B] transition-transform ${isCollapsed ? "rotate-0" : "-rotate-90"}`} />
+          </button>
+        </header>
+
+        {/* SIDEBAR */}
+        <aside
+          className={`sidebar-base ${isCollapsed ? "sidebar-c" : "sidebar-e"}`}
         >
-          <ChevronLeft className={`w-5 h-5 text-[#2F3A4B] transition-transform ${isCollapsed ? "rotate-0" : "-rotate-90"}`} />
-        </button>
-      </header>
+          {/* DESKTOP TOGGLE (Hidden on Mobile) */}
+          <button
+            onClick={toggleSidebar}
+            className={`sidebar-toggle cursor-pointer hidden md:flex ${isCollapsed ? "rotate-180" : ""}`}
+          >
+            <ChevronLeft className="w-4 h-4 text-[#2F3A4B]" />
+          </button>
 
-      {/* SIDEBAR */}
-      <aside
-        className={`sidebar-base ${isCollapsed ? "sidebar-c" : "sidebar-e"}`}
-      >
-        {/* DESKTOP TOGGLE (Hidden on Mobile) */}
-        <button
-          onClick={toggleSidebar}
-          className={`sidebar-toggle cursor-pointer hidden md:flex ${isCollapsed ? "rotate-180" : ""}`}
+          {/* LOGO */}
+          <div className={`logo-wrap ${isCollapsed ? "logo-c" : "logo-e"}`}>
+            <Image src="/logo.webp" alt="logo" width={40} height={40} />
+            {!isCollapsed && <h1 className="logo-title">Jurnify</h1>}
+          </div>
+
+          {/* MAIN MENU */}
+          <nav className={`menu-wrap ${isCollapsed ? "menu-c" : ""}`}>
+            {mainMenu.map((item, i) => {
+              const Icon = item.icon;
+
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => goTo(item.path)}
+                  className={`menu-item cursor-pointer
+                    ${isActive(item.path) ? "menu-active" : "menu-normal"}
+                    ${isCollapsed ? "menu-center" : ""}
+                    menu-stagger-${i}
+                  `}
+                >
+                  <Icon className="menu-icon" />
+                  {!isCollapsed && (
+                    <span className="menu-label">{item.label}</span>
+                  )}
+
+                  {isCollapsed && !isActive(item.path) && (
+                    <span className="tooltip">{item.label}</span>
+                  )}
+                </button>
+              );
+            })}
+          </nav>
+
+          <div className="flex-1" />
+
+          {/* BOTTOM MENU */}
+          <nav
+            className={`menu-wrap border-t border-white/40 pt-4 ${
+              isCollapsed ? "menu-c" : ""
+            }`}
+          >
+            {bottomMenu.map((item, i) => {
+              const Icon = item.icon;
+
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => goTo(item.path)}
+                  className={`menu-item cursor-pointer
+                    ${isActive(item.path) ? "menu-active" : "menu-normal"}
+                    ${isCollapsed ? "menu-center" : ""}
+                    menu-stagger-${i + 3}
+                  `}
+                >
+                  <Icon className="menu-icon" />
+                  {!isCollapsed && (
+                    <span className="menu-label">{item.label}</span>
+                  )}
+
+                  {isCollapsed && !isActive(item.path) && (
+                    <span className="tooltip">{item.label}</span>
+                  )}
+                </button>
+              );
+            })}
+          </nav>
+        </aside>
+
+        {/* MAIN CONTENT */}
+        <div
+          className={`content-base ${isCollapsed ? "content-c" : "content-e"}`}
         >
-          <ChevronLeft className="w-4 h-4 text-[#2F3A4B]" />
-        </button>
-
-        {/* LOGO */}
-        <div className={`logo-wrap ${isCollapsed ? "logo-c" : "logo-e"}`}>
-          <Image src="/logo.webp" alt="logo" width={40} height={40} className="w-10 h-10" />
-          {!isCollapsed && <h1 className="logo-title">Jurnify</h1>}
+          <div ref={contentInner} className="content-anim">
+            {children}
+          </div>
         </div>
 
-        {/* MAIN MENU */}
-        <nav className={`menu-wrap ${isCollapsed ? "menu-c" : ""}`}>
-          {mainMenu.map((item, i) => {
-            const Icon = item.icon;
-
-            return (
-              <button
-                key={item.id}
-                onClick={() => goTo(item.path)}
-                className={`menu-item cursor-pointer
-                  ${isActive(item.path) ? "menu-active" : "menu-normal"}
-                  ${isCollapsed ? "menu-center" : ""}
-                  menu-stagger-${i}
-                `}
-              >
-                <Icon className="menu-icon" />
-                {!isCollapsed && (
-                  <span className="menu-label">{item.label}</span>
-                )}
-
-                {isCollapsed && !isActive(item.path) && (
-                  <span className="tooltip">{item.label}</span>
-                )}
-              </button>
-            );
-          })}
-        </nav>
-
-        <div className="flex-1" />
-
-        {/* BOTTOM MENU */}
-        <nav
-          className={`menu-wrap border-t border-white/40 pt-4 ${
-            isCollapsed ? "menu-c" : ""
-          }`}
-        >
-          {bottomMenu.map((item, i) => {
-            const Icon = item.icon;
-
-            return (
-              <button
-                key={item.id}
-                onClick={() => goTo(item.path)}
-                className={`menu-item cursor-pointer
-                  ${isActive(item.path) ? "menu-active" : "menu-normal"}
-                  ${isCollapsed ? "menu-center" : ""}
-                  menu-stagger-${i + 3}
-                `}
-              >
-                <Icon className="menu-icon" />
-                {!isCollapsed && (
-                  <span className="menu-label">{item.label}</span>
-                )}
-
-                {isCollapsed && !isActive(item.path) && (
-                  <span className="tooltip">{item.label}</span>
-                )}
-              </button>
-            );
-          })}
-        </nav>
-      </aside>
-
-      {/* MAIN CONTENT */}
-      <div
-        className={`content-base ${isCollapsed ? "content-c" : "content-e"}`}
-      >
-        <div ref={contentInner} className="content-anim">
-          {children}
-        </div>
-      </div>
 
       {/* STYLES */}
       <style jsx>{`
@@ -412,5 +426,6 @@ export default function DashboardLayout({
         }
       `}</style>
     </section>
+    </TimerProvider>
   );
 }
